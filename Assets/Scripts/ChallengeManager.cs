@@ -47,6 +47,7 @@ public class ChallengeManager : MonoBehaviour
             Sprite longTermSprite = longTermChallenges[Random.Range(0, longTermChallenges.Count)].ChallengeImage;
             GameObject newCard = Instantiate(challengeCardPrefab, challengeContainer);
             newCard.GetComponent<Image>().sprite = longTermSprite;
+            Debug.Log("Challenge card added");
         }
 
 

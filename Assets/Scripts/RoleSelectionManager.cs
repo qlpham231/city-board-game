@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,11 +25,13 @@ public class RoleSelectionManager : MonoBehaviour
         startGameButton.interactable = false;
     }
 
-    public void SelectRole(Role role)
+    public void SelectRole(int roleValue)
     {
+        Role role = (Role)roleValue;
+
         if (currentPlayer <= maxPlayers)
         {
-            Player player = new Player(1, role, 0);
+            Player player = new Player(currentPlayer, role, 0);
             playerList.Add(player);
 
             // Display selected role in UI

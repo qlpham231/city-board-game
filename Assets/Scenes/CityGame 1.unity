@@ -55205,29 +55205,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   solutionSelectionCanvas: {fileID: 1024969298}
-  challengeDropdown1: {fileID: 1494637510}
-  solutionDropdown1: {fileID: 827687937}
-  contributorDropdown1: {fileID: 0}
-  resourceDropdown1_1: {fileID: 0}
-  contributorDropdown1_1: {fileID: 0}
-  resourceDropdown1_2: {fileID: 0}
-  contributorDropdown1_2: {fileID: 0}
-  resourceDropdown1_3: {fileID: 0}
-  contributorDropdown1_3: {fileID: 0}
-  resourceDropdown1_4: {fileID: 0}
-  contributorDropdown1_4: {fileID: 0}
-  challengeDropdown2: {fileID: 0}
-  solutionDropdown2: {fileID: 0}
-  contributorDropdown2: {fileID: 0}
-  resourceDropdown2_1: {fileID: 0}
-  contributorDropdown2_1: {fileID: 0}
-  resourceDropdown2_2: {fileID: 0}
-  contributorDropdown2_2: {fileID: 0}
-  resourceDropdown2_3: {fileID: 0}
-  contributorDropdown2_3: {fileID: 0}
-  resourceDropdown2_4: {fileID: 0}
-  contributorDropdown2_4: {fileID: 0}
-  submitButton: {fileID: 0}
+  challengeDropdown1: {fileID: 1243366242}
+  solutionDropdown1: {fileID: 2129881418}
+  contributorDropdown1: {fileID: 149996442}
+  resourceDropdown1_1: {fileID: 728488972}
+  contributorDropdown1_1: {fileID: 941410788}
+  resourceDropdown1_2: {fileID: 2130004361}
+  contributorDropdown1_2: {fileID: 173263300}
+  resourceDropdown1_3: {fileID: 85536269}
+  contributorDropdown1_3: {fileID: 1936151620}
+  resourceDropdown1_4: {fileID: 1220646158}
+  contributorDropdown1_4: {fileID: 1367946021}
+  challengeDropdown2: {fileID: 1276098942}
+  solutionDropdown2: {fileID: 1628434094}
+  contributorDropdown2: {fileID: 65536167}
+  resourceDropdown2_1: {fileID: 849055314}
+  contributorDropdown2_1: {fileID: 518666283}
+  resourceDropdown2_2: {fileID: 1997502388}
+  contributorDropdown2_2: {fileID: 1520927532}
+  resourceDropdown2_3: {fileID: 987912111}
+  contributorDropdown2_3: {fileID: 755948726}
+  resourceDropdown2_4: {fileID: 1551339821}
+  contributorDropdown2_4: {fileID: 1355161509}
+  submitButton: {fileID: 1436549894}
   feedbackText: {fileID: 570593741}
 --- !u!1001 &1165801855
 PrefabInstance:
@@ -82410,8 +82410,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c054b2fd026d8d4fa60a501dd28e08b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roundText: {fileID: 0}
-  timerText: {fileID: 0}
+  roundText: {fileID: 123363344}
+  timerText: {fileID: 1620058516}
   roundDuration: 10
   currentRound: 1
   playerList: []

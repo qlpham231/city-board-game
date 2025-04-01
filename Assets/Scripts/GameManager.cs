@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,10 +14,14 @@ public class GameManager : MonoBehaviour
     public int roundDuration = 10;    // Set your round duration
     public int currentRound = 1;
 
+    private bool isSolutionSubmitted = false;
+
     public List<Player> playerList = new List<Player>();
     public List<Challenge> challenges = new List<Challenge>();
     public List<Solution> solutions = new List<Solution>();
     public List<Resource> resources = new List<Resource>();
+
+    public UnityEvent<List<Player>> onPlayerListUpdated = new();
 
     private void Awake()
     {
@@ -48,16 +53,23 @@ public class GameManager : MonoBehaviour
             -5,
             new List<Solution> { campaignAir },
             Resources.Load<Sprite>("Textures/HousingShortage")));
+
+        challenges.Add(new Challenge(
+            "Air Quality",
+            ChallengeType.Sudden,
+            -10,
+            new List<Solution> { campaignAir },
+            Resources.Load<Sprite>("Textures/AirQuality")));
     }
 
-
-    
 
     public void SetPlayers(List<Player> players)
     {
         playerList = players;
         Debug.Log($"GameManager received {playerList.Count} players.");
+        onPlayerListUpdated.Invoke(players);
     }
+
     public void StartGame()
     {
         if (playerList.Count == 0)
@@ -73,6 +85,7 @@ public class GameManager : MonoBehaviour
     private void StartNextRound()
     {
         roundText.text = "Round " + currentRound + " of 4";
+        ChallengeManager.Instance.StartNewRound();
         StartCoroutine(StartRoundTimer());
     }
 
@@ -95,20 +108,42 @@ public class GameManager : MonoBehaviour
     private void EndRound()
     {
         Debug.Log("Round " + currentRound + " ended.");
-        // Trigger solution selection
+
+        isSolutionSubmitted = false;  // Reset flag for the next round
+
+        // Trigger solution selection UI
+        SubmissionManager.Instance.solutionSelectionCanvas.SetActive(true);
+
+        // Wait until the solution is submitted before proceeding
+        StartCoroutine(WaitForSolutionSubmission());
+    }
+
+    public void RegisterSolution()
+    {
+        isSolutionSubmitted = true;
+    }
+
+    private IEnumerator WaitForSolutionSubmission()
+    {
+        while (!isSolutionSubmitted)
+        {
+            yield return null; // Keep waiting
+        }
 
         currentRound++;
-        if (currentRound <= 4)  // Continue until all rounds are done
+
+        if (currentRound <= 4)
         {
             StartNextRound();
-            ChallengeManager.Instance.StartNewRound();  // Start the next challenge round
         }
         else
         {
             Debug.Log("Game Over! Final scores calculated.");
-            // TODO: Calculate final scores
+            // TODO: Show final score UI
         }
     }
+
+    
 
     public Challenge GetChallengeByName(string name)
     {

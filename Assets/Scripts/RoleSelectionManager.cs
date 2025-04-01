@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,8 +18,7 @@ public class RoleSelectionManager : MonoBehaviour
     private int maxPlayers = 7;
     private int minPlayers = 2;
     private int currentPlayer = 1;
-    private List<string> selectedRoles = new List<string>();
-    private string[] roles = { "City Government Official", "Private Sector Representative", "Environmental Advocate", "Citizen", "External Collaborator" };
+    private List<Player> playerList = new List<Player>();
 
     // Start is called before the first frame update
     void Start()
@@ -27,16 +27,16 @@ public class RoleSelectionManager : MonoBehaviour
         startGameButton.interactable = false;
     }
 
-    public void SelectRole(int roleIndex)
+    public void SelectRole(Role role)
     {
         if (currentPlayer <= maxPlayers)
         {
-            string selectedRole = roles[roleIndex];
-            selectedRoles.Add(selectedRole);
+            Player player = new Player(1, role, 0);
+            playerList.Add(player);
 
             // Display selected role in UI
             GameObject newPlayerRole = Instantiate(playerRolePrefab, playerListContainer);
-            newPlayerRole.GetComponent<TextMeshProUGUI>().text = "Player " + currentPlayer + ": " + selectedRole;
+            newPlayerRole.GetComponent<TextMeshProUGUI>().text = "Player " + currentPlayer + ": " + role.GetDescription();
 
             currentPlayer++;
 
@@ -51,14 +51,16 @@ public class RoleSelectionManager : MonoBehaviour
     public void StartGame()
     {
         Debug.Log("Starting game with roles:");
-        foreach (string role in selectedRoles)
+        foreach (Player p in playerList)
         {
-            Debug.Log(role);
+            Debug.Log(p.Role);
         }
         // Load the next game scene or initialize the next phase here
         if (challengeManager != null)
         {
-            StartCoroutine(challengeManager.StartNewRound()); // This starts the first round
+            GameManager.Instance.SetPlayers(playerList);
+            GameManager.Instance.StartGame();
+            //StartCoroutine(challengeManager.StartNewRound()); // This starts the first round
             roleSelectionCanvas.SetActive(false);
         }
         else

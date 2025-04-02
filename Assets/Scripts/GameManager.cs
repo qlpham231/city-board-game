@@ -55,11 +55,18 @@ public class GameManager : MonoBehaviour
             Resources.Load<Sprite>("Textures/HousingShortage")));
 
         challenges.Add(new Challenge(
-            "Air Quality",
+            "Air Quality Crisis",
             ChallengeType.Sudden,
             -10,
             new List<Solution> { campaignAir },
             Resources.Load<Sprite>("Textures/AirQuality")));
+
+        challenges.Add(new Challenge(
+            "Water Supply Crisis",
+            ChallengeType.Sudden,
+            -10,
+            new List<Solution> {  },
+            Resources.Load<Sprite>("Textures/WaterCrisis")));
     }
 
 

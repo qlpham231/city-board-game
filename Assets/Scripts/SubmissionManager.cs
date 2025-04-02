@@ -3,7 +3,6 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class SubmissionManager : MonoBehaviour
 {
@@ -47,6 +46,7 @@ public class SubmissionManager : MonoBehaviour
         solutionSelectionCanvas.SetActive(false);
         submitButton.onClick.AddListener(SubmitSolution);
         GameManager.Instance.onPlayerListUpdated.AddListener(UpdatePlayers);
+        ChallengeManager.Instance.onCurrentChallengesUpdated.AddListener(UpdateChallenges);
 
         List<string> challengeNames = GameManager.Instance.challenges.Select(c => c.Name).ToList();
         List<string> solutionNames = GameManager.Instance.solutions.Select(s => s.Name).ToList();
@@ -60,16 +60,34 @@ public class SubmissionManager : MonoBehaviour
 
     private void UpdatePlayers(List<Player> players)
     {
-        List<string> playerNames = GameManager.Instance.playerList
+        List<string> playerNames = players
             .Select(p => $"Player {p.PlayerNr}")
             .ToList();
         playerNames.Insert(0, "Select Player");
 
         foreach (TMP_Dropdown dropdown in GetComponentsInChildren<TMP_Dropdown>())
         {
-            if (dropdown.name == "PlayerDropdown") {
-                dropdown.ClearOptions(); dropdown.AddOptions(playerNames); }
+            if (dropdown.name == "PlayerDropdown") 
+            {
+                dropdown.ClearOptions(); 
+                dropdown.AddOptions(playerNames); 
             }
+        }
+    }
+
+    private void UpdateChallenges(List<Challenge> challenges)
+    {
+        List<string> challengeNames = challenges.Select(c => c.Name).ToList();
+        challengeNames.Insert(0, "Select Challenge");
+
+        foreach (TMP_Dropdown dropdown in GetComponentsInChildren<TMP_Dropdown>())
+        {
+            if (dropdown.name == "ChallengeDropdown")
+            {
+                dropdown.ClearOptions(); 
+                dropdown.AddOptions(challengeNames);
+            }
+        }
     }
 
     public void PopulateDropdowns(List<string> challenges, List<string> solutions, List<string> resources, List<string> players)
@@ -140,6 +158,7 @@ public class SubmissionManager : MonoBehaviour
 
         GameManager.Instance.RegisterSolution();
         solutionSelectionCanvas.SetActive(false);
+        ResetDropdowns();
     }
 
     private bool Validate(TMP_Dropdown challengeDropdown, TMP_Dropdown solutionDropdown, TMP_Dropdown playerDropdown,

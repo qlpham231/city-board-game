@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -167,7 +168,7 @@ public class SubmissionManager : MonoBehaviour
                                  TMP_Dropdown resourceDropdown3, TMP_Dropdown contributorDropdown3,
                                  TMP_Dropdown resourceDropdown4, TMP_Dropdown contributorDropdown4)
     {
-        if (challengeDropdown.value == 0 || challengeDropdown.value == 0 || challengeDropdown.value == 0) { return false; }
+        if (challengeDropdown.value == 0 || solutionDropdown.value == 0 || playerDropdown.value == 0) { return false; }
 
         Challenge selectedChallenge = GameManager.Instance.GetChallengeByName(challengeDropdown.options[challengeDropdown.value].text);
         Solution selectedSolution = GameManager.Instance.GetSolutionByName(solutionDropdown.options[solutionDropdown.value].text);
@@ -187,7 +188,9 @@ public class SubmissionManager : MonoBehaviour
         }
 
         // ✅ Step 2: Collect selected resources (allowing up to 4, but some can be empty)
-        List<Resource> selectedResources = new List<Resource>();
+        //List<Resource> selectedResources = new List<Resource>();
+        //Dictionary<Player, Resource> selectedResources = new Dictionary<Player, Resource>();
+        List<KeyValuePair<Player, Resource>> selectedResources = new List<KeyValuePair<Player, Resource>>();
         AssignResource(selectedResources, resourceDropdown1, contributorDropdown1);
         AssignResource(selectedResources, resourceDropdown2, contributorDropdown2);
         AssignResource(selectedResources, resourceDropdown3, contributorDropdown3);
@@ -201,30 +204,32 @@ public class SubmissionManager : MonoBehaviour
         }
 
         // ✅ Step 4: Register the solution and update game state
-       // selectedPlayer.SubmitSolution(selectedSolution);
+        // selectedPlayer.SubmitSolution(selectedSolution);
+        ScoreManager.Instance.CalculateScores(selectedPlayer, selectedSolution, selectedResources);
         return true;
     }
 
-    private void AssignResource(List<Resource> selectedResources, TMP_Dropdown resourceDropdown, TMP_Dropdown contributorDropdown)
+    private void AssignResource(List<KeyValuePair<Player, Resource>> selectedResources, TMP_Dropdown resourceDropdown, TMP_Dropdown contributorDropdown)
     {
         if (resourceDropdown.value > 0 && contributorDropdown.value > 0) // Ensure a valid selection
         {
             Resource selectedResource = GameManager.Instance.GetResourceByName(resourceDropdown.options[resourceDropdown.value].text);
             Player contributingPlayer = GameManager.Instance.GetPlayerByName(contributorDropdown.options[contributorDropdown.value].text);
-
+            
             if (selectedResource != null && contributingPlayer != null)
             {
-                selectedResources.Add(selectedResource);
+                selectedResources.Add(new KeyValuePair<Player, Resource>(contributingPlayer, selectedResource));
             }
         }
     }
 
-    private bool ValidateResources(Solution solution, List<Resource> selectedResources)
+    private bool ValidateResources(Solution solution, List<KeyValuePair<Player, Resource>> selectedResources)
     {
         Dictionary<ResourceType, int> requiredResources = new Dictionary<ResourceType, int>(solution.RequiredResources);
-
-        foreach (Resource resource in selectedResources)
+        
+        foreach (var kvp in selectedResources)
         {
+            Resource resource = kvp.Value;
             //if (resource.ApplicableSolutions != null)
             //{
                 // ✅ Check if resource has additional conditions (allowed solutions)

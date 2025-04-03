@@ -90,7 +90,7 @@ public class Resource
     public Resource(string name, ResourceType type, int amount, List<Solution> solutions, int points, List<Role> collabRoles)
     {
         Name = name;
-        ResourceType resourceType = type;
+        ResourceType = type;
         Amount = amount;
         ApplicableSolutions = solutions;
         CollabPoints = points;

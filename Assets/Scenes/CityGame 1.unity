@@ -25814,7 +25814,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 35.400024, y: 27.98}
+  m_AnchoredPosition: {x: 35.399902, y: 27.97998}
   m_SizeDelta: {x: 460, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &529109412
@@ -82339,9 +82339,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1708443398}
+  - component: {fileID: 1708443400}
   - component: {fileID: 1708443397}
   - component: {fileID: 1708443399}
-  - component: {fileID: 1708443400}
+  - component: {fileID: 1708443401}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -82396,8 +82397,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   challengeContainer: {fileID: 218069153}
   challengeCardPrefab: {fileID: 2108824620231512484, guid: 24045aad1b575934e97a7807bbc2fef3, type: 3}
-  longTermChallenges: []
-  suddenCrisis: []
+  availableLongTermChallenges: []
+  availableSuddenCrises: []
+  onCurrentChallengesUpdated:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1708443400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82421,6 +82425,19 @@ MonoBehaviour:
   onPlayerListUpdated:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1708443401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1708443396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f0ff0ebc4c9e704590c930848b45a47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cityTransformationPointsText: {fileID: 101550693}
 --- !u!1001 &1710356404
 PrefabInstance:
   m_ObjectHideFlags: 0

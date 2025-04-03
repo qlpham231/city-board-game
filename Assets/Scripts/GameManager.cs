@@ -40,11 +40,16 @@ public class GameManager : MonoBehaviour
 
     private void InitializeData()
     {
-        Resource govGrant = new Resource("Government Grant", ResourceType.Funding, 10, null, 2, new List<Role> { Role.EnvAdvocate, Role.Citizen });
-        resources = new List<Resource> { govGrant };
-
         Solution campaignAir = new Solution("Public Awareness Campaign on Air Quality", 6, 3, new List<Role> { Role.PrivateRep, Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Community, 3 } }, 1, 2, 0, 0, 3, 1);
         solutions = new List<Solution> { campaignAir };
+
+        Resource govGrant = new Resource("Government Grant", ResourceType.Funding, 10, null, 2, new List<Role> { Role.EnvAdvocate, Role.Citizen });
+
+        Resource volNetwork = new Resource("Volunteer Network", ResourceType.Community, 3, new List<Solution> { campaignAir }, 0, null);
+        
+        resources = new List<Resource> { govGrant, volNetwork };
+
+        
 
 
         challenges.Add(new Challenge(

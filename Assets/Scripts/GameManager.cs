@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
 
     private void InitializeData()
     {
-        Solution campaignAir = new Solution("Public Awareness Campaign on Air Quality", 6, 3, new List<Role> { Role.PrivateRep, Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Community, 3 } }, 1, 2, 0, 0, 3, 1);
+        Solution campaignAir = new Solution("Public Awareness Campaign on Air Quality", 6, 3, new List<Role> { Role.PrivateRep, Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Community, 3 } }, new int[]{ 1, 2, 0, 0, 3, 1 });
         solutions = new List<Solution> { campaignAir };
 
         Resource govGrant = new Resource("Government Grant", ResourceType.Funding, 10, null, 2, new List<Role> { Role.EnvAdvocate, Role.Citizen });
@@ -152,6 +152,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Game Over! Final scores calculated.");
             // TODO: Show final score UI
+            ScoreManager.Instance.ShowPostGameSummary();
         }
     }
 

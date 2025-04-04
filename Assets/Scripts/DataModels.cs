@@ -51,6 +51,7 @@ public class Solution
     public int CollabPoints { get; }
     public List<Role> CollabRoles { get; }
     public Dictionary<ResourceType, int> RequiredResources { get; }
+    public int[] ParameterChanges { get; }
 
     // Fixed parameter fields
     public int Transport { get; }
@@ -60,20 +61,18 @@ public class Solution
     public int AirQuality { get; }
     public int Economy { get; }
 
-    public Solution(string name, int points, int collabPoints, List<Role> collabRoles, Dictionary<ResourceType, int> cost, int transport, int ecological, int water, int energy, int airQuality, int economy)
+    /// <summary>
+    /// Creates a solution.
+    /// </summary>
+    /// <param name="parameterChanges">Parameter changes to the spider diagram: Transport, Ecological, Water Resources, Energy, Air Quality, Economy.</param>
+    public Solution(string name, int points, int collabPoints, List<Role> collabRoles, Dictionary<ResourceType, int> cost, int[] parameterChanges)
     {
         Name = name;
         Points = points;
         CollabPoints = collabPoints;
         CollabRoles = collabRoles;
         RequiredResources = cost;
-
-        Transport = transport;
-        Ecological = ecological;
-        WaterResources = water;
-        Energy = energy;
-        AirQuality = airQuality;
-        Economy = economy;
+        ParameterChanges = parameterChanges;
     }
 }
 

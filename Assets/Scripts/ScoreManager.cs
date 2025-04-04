@@ -11,6 +11,11 @@ public class ScoreManager : MonoBehaviour
     public int CityTransformationScore { get; private set; } = 0;
     public Dictionary<Player, int> PlayerScores { get; private set; } = new Dictionary<Player, int>();
 
+    public GameObject gameSummaryPanel;
+    public TextMeshProUGUI finalCityScoreText;
+    public Transform playerScoreListContainer;
+    public GameObject playerScoreRowPrefab;
+
     private void Awake()
     {
         if (Instance == null)
@@ -23,6 +28,11 @@ public class ScoreManager : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
+    }
+
+    private void Start()
+    {
+        gameSummaryPanel.SetActive(false);
     }
 
     public void CalculateScores(Player solutionProvider, Solution solution, List<KeyValuePair<Player, Resource>> resources)
@@ -107,4 +117,31 @@ public class ScoreManager : MonoBehaviour
         }
         PlayerScores[player] += points;
     }
+
+    public void ShowPostGameSummary()
+    {
+        gameSummaryPanel.SetActive(true);
+        SpiderDiagram.Instance.spiderDiagramCanvas.sortingOrder = 6;
+
+        // Show final city score
+        finalCityScoreText.text = "City Transformation Score: " + CityTransformationScore;
+
+        // Sort players by score descending
+        var rankedPlayers = PlayerScores.OrderByDescending(pair => pair.Value).ToList();
+
+        int rank = 1;
+        foreach (var pair in rankedPlayers)
+        {
+            GameObject row = Instantiate(playerScoreRowPrefab, playerScoreListContainer);
+            TextMeshProUGUI[] texts = row.GetComponentsInChildren<TextMeshProUGUI>();
+
+            texts[0].text = $"#{rank}";
+            texts[1].text = $"Player {pair.Key.PlayerNr}: " + pair.Key.Role.GetDescription(); // or use a DescriptionAttribute helper
+            texts[2].text = pair.Value.ToString() + " TPs";
+
+            rank++;
+        }
+    }
+
+
 }

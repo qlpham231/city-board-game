@@ -27,6 +27,8 @@ public class SubmissionManager : MonoBehaviour
     public Button submitButton;
     public TextMeshProUGUI feedbackText;
 
+    private List<Solution> acceptedSolutions = new List<Solution>();
+
     private void Awake()
     {
         if (Instance == null)
@@ -113,6 +115,7 @@ public class SubmissionManager : MonoBehaviour
 
     private void SubmitSolution()
     {
+        acceptedSolutions.Clear();
         // 1st solution & resources
         string selectedChallenge1 = challengeDropdown1.options[challengeDropdown1.value].text;
         string selectedSolution1 = solutionDropdown1.options[solutionDropdown1.value].text;
@@ -138,8 +141,10 @@ public class SubmissionManager : MonoBehaviour
         }
         else if (success1 && success2)
         {
+            
             feedbackText.text = "Both solutions successfully applied!";
             feedbackText.color = Color.green;
+
         }
         else if (success1)
         {
@@ -157,6 +162,7 @@ public class SubmissionManager : MonoBehaviour
             feedbackText.color = Color.red;
         }
 
+        SpiderDiagram.Instance.UpdateSpiderDiagram(acceptedSolutions);
         GameManager.Instance.RegisterSolution();
         solutionSelectionCanvas.SetActive(false);
         ResetDropdowns();
@@ -205,6 +211,7 @@ public class SubmissionManager : MonoBehaviour
 
         // ✅ Step 4: Register the solution and update game state
         // selectedPlayer.SubmitSolution(selectedSolution);
+        acceptedSolutions.Add(selectedSolution);
         ScoreManager.Instance.CalculateScores(selectedPlayer, selectedSolution, selectedResources);
         return true;
     }

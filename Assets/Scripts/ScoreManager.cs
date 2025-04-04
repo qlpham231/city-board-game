@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class ScoreManager : MonoBehaviour
 {
@@ -116,6 +117,20 @@ public class ScoreManager : MonoBehaviour
             PlayerScores[player] = 0;
         }
         PlayerScores[player] += points;
+        PlayerScores[player] = Math.Max(0, PlayerScores[player]);
+    }
+
+    public void ApplyPenalty(int penaltyPoints)
+    {
+        Debug.Log($"Applying penalty: -{penaltyPoints} points");
+
+        CityTransformationScore -= penaltyPoints;
+        if (CityTransformationScore < 0) CityTransformationScore = 0;
+
+        int penaltyPerPlayer = GameManager.Instance.playerList.Count > 0 ? Mathf.CeilToInt((float)penaltyPoints / GameManager.Instance.playerList.Count) : 0;
+        GameManager.Instance.playerList.ForEach(player => AddPointsToPlayer(player, -penaltyPerPlayer));
+
+        cityTransformationPointsText.text = "City transformation points: " + CityTransformationScore;
     }
 
     public void ShowPostGameSummary()

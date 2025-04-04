@@ -12,6 +12,7 @@ public class ChallengeManager : MonoBehaviour
     public List<Challenge> availableLongTermChallenges; // List of long-term challenges
     public List<Challenge> availableSuddenCrises; // List of sudden crises challenges
     private List<Challenge> activeChallenges = new();
+    private Dictionary<Challenge, int> challengeStartRounds = new(); 
 
     private int consecutiveCrises = 0;
     private float crisisChance = 0.2f; // Starts at 20% and increases
@@ -45,22 +46,17 @@ public class ChallengeManager : MonoBehaviour
 
     private void DisplayChallengeCard()
     {
+        Challenge selectedChallenge = null;
+
         // Draws a long-term challenge in Round 1 and Round 3
         if (GameManager.Instance.currentRound == 1 || GameManager.Instance.currentRound == 3)
         {
-            Challenge selectedChallenge = DrawUniqueChallenge(ref availableLongTermChallenges);
-            activeChallenges.Add(selectedChallenge);
-            onCurrentChallengesUpdated.Invoke(activeChallenges);
-            DisplayChallenge(selectedChallenge);
+            selectedChallenge = DrawUniqueChallenge(ref availableLongTermChallenges);
         }
 
         if (GameManager.Instance.currentRound > 1 && Random.value < crisisChance && consecutiveCrises < 2)
         {
-            Challenge selectedCrisis = DrawUniqueChallenge(ref availableSuddenCrises);
-            activeChallenges.Add(selectedCrisis);
-            onCurrentChallengesUpdated.Invoke(activeChallenges);
-            DisplayChallenge(selectedCrisis);
-
+            selectedChallenge = DrawUniqueChallenge(ref availableSuddenCrises);
             consecutiveCrises++;
             crisisChance = 0.2f; // Reset crisis chance
         }
@@ -68,6 +64,14 @@ public class ChallengeManager : MonoBehaviour
         {
             crisisChance += 0.2f; // Increase crisis probability for next round
             consecutiveCrises = 0; // Reset consecutive crisis counter if no crisis occurs
+        }
+
+        if (selectedChallenge != null)
+        {
+            activeChallenges.Add(selectedChallenge);
+            challengeStartRounds[selectedChallenge] = GameManager.Instance.currentRound;
+            onCurrentChallengesUpdated.Invoke(activeChallenges);
+            DisplayChallenge(selectedChallenge);
         }
     }
 
@@ -106,6 +110,25 @@ public class ChallengeManager : MonoBehaviour
             return new List<Challenge>(GameManager.Instance.challenges
                 .Where(c => c.Type == ChallengeType.Sudden)
                 .ToList());
+        }
+    }
+
+    public void ApplyPenalties()
+    {
+        List<Challenge> unresolvedChallenges = new(activeChallenges);
+
+        foreach (Challenge challenge in unresolvedChallenges)
+        {
+            int challengeAge = GameManager.Instance.currentRound - challengeStartRounds[challenge];
+
+            if ((challenge.Type == ChallengeType.Sudden && challengeAge >= 1) ||
+                (challenge.Type == ChallengeType.LongTerm && challengeAge >= 3))
+            {
+                Debug.Log($"Penalty applied for unresolved challenge: {challenge.Name}");
+                ScoreManager.Instance.ApplyPenalty(challenge.PenaltyPoints);
+                activeChallenges.Remove(challenge);
+                challengeStartRounds.Remove(challenge);
+            }
         }
     }
 }

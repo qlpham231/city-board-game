@@ -55,21 +55,21 @@ public class GameManager : MonoBehaviour
         challenges.Add(new Challenge(
             "Housing Shortage",
             ChallengeType.LongTerm,
-            -5,
+            5,
             new List<Solution> { campaignAir },
             Resources.Load<Sprite>("Textures/HousingShortage")));
 
         challenges.Add(new Challenge(
             "Air Quality Crisis",
             ChallengeType.Sudden,
-            -10,
+            10,
             new List<Solution> { campaignAir },
             Resources.Load<Sprite>("Textures/AirQuality")));
 
         challenges.Add(new Challenge(
             "Water Supply Crisis",
             ChallengeType.Sudden,
-            -10,
+            10,
             new List<Solution> {  },
             Resources.Load<Sprite>("Textures/WaterCrisis")));
     }
@@ -143,6 +143,7 @@ public class GameManager : MonoBehaviour
         }
 
         currentRound++;
+        ChallengeManager.Instance.ApplyPenalties();
 
         if (currentRound <= 4)
         {

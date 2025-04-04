@@ -125,8 +125,8 @@ public class SubmissionManager : MonoBehaviour
         string selectedSolution2 = solutionDropdown2.options[solutionDropdown2.value].text;
 
         bool success1 = Validate(challengeDropdown1, solutionDropdown1, contributorDropdown1,
-        resourceDropdown1_1, contributorDropdown1_1, resourceDropdown1_2, contributorDropdown1_2,
-        resourceDropdown1_3, contributorDropdown1_3, resourceDropdown1_4, contributorDropdown1_4);
+            resourceDropdown1_1, contributorDropdown1_1, resourceDropdown1_2, contributorDropdown1_2,
+            resourceDropdown1_3, contributorDropdown1_3, resourceDropdown1_4, contributorDropdown1_4);
 
         bool success2 = Validate(challengeDropdown2, solutionDropdown2, contributorDropdown2,
             resourceDropdown2_1, contributorDropdown2_1, resourceDropdown2_2, contributorDropdown2_2,

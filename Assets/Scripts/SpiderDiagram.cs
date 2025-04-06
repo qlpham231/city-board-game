@@ -12,7 +12,7 @@ public class SpiderDiagram : MonoBehaviour
     Vector2[] points;
 
     float[] angles = { 90f, 30f, -30f, -90f, -150f, 150f }; // Fixed angles
-    Color[] colors = { Color.red, Color.blue, Color.green, Color.magenta, Color.cyan};
+    Color[] colors = { Color.red, Color.magenta, Color.blue, Color.green, Color.cyan };
 
     int[] parameters = { 4, 4, 5, 5, 4, 5 }; // Start parameter values for the city
 

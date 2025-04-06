@@ -213,6 +213,8 @@ public class SubmissionManager : MonoBehaviour
         // selectedPlayer.SubmitSolution(selectedSolution);
         acceptedSolutions.Add(selectedSolution);
         ScoreManager.Instance.CalculateScores(selectedPlayer, selectedSolution, selectedResources);
+        ChallengeManager.Instance.ResolveChallenge(selectedChallenge);
+        CityReactionManager.Instance.PlayReaction(selectedChallenge, ChallengeReactionLevel.Success);
         return true;
     }
 

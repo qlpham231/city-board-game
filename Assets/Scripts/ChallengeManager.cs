@@ -12,7 +12,8 @@ public class ChallengeManager : MonoBehaviour
     public List<Challenge> availableLongTermChallenges; // List of long-term challenges
     public List<Challenge> availableSuddenCrises; // List of sudden crises challenges
     private List<Challenge> activeChallenges = new();
-    private Dictionary<Challenge, int> challengeStartRounds = new(); 
+    private Dictionary<Challenge, int> challengeStartRounds = new();
+    private Dictionary<Challenge, GameObject> challengeCards = new(); // Maps challenge to its UI card
 
     private int consecutiveCrises = 0;
     private float crisisChance = 0.2f; // Starts at 20% and increases
@@ -94,6 +95,7 @@ public class ChallengeManager : MonoBehaviour
     {
         GameObject newCard = Instantiate(challengeCardPrefab, challengeContainer);
         newCard.GetComponent<Image>().sprite = challenge.ChallengeImage;
+        challengeCards[challenge] = newCard;
         Debug.Log($"Displayed challenge: {challenge.Name}");
     }
 
@@ -113,6 +115,23 @@ public class ChallengeManager : MonoBehaviour
         }
     }
 
+    public void ResolveChallenge(Challenge challenge)
+    {
+        if (activeChallenges.Contains(challenge))
+        {
+            Debug.Log($"Challenge '{challenge.Name}' resolved by player.");
+            activeChallenges.Remove(challenge);
+            challengeStartRounds.Remove(challenge);
+            onCurrentChallengesUpdated.Invoke(activeChallenges);
+        }
+
+        if (challengeCards.TryGetValue(challenge, out GameObject card))
+        {
+            Destroy(card);
+            challengeCards.Remove(challenge);
+        }
+    }
+
     public void ApplyPenalties()
     {
         List<Challenge> unresolvedChallenges = new(activeChallenges);
@@ -128,6 +147,13 @@ public class ChallengeManager : MonoBehaviour
                 ScoreManager.Instance.ApplyPenalty(challenge.PenaltyPoints);
                 activeChallenges.Remove(challenge);
                 challengeStartRounds.Remove(challenge);
+
+                if (challengeCards.TryGetValue(challenge, out GameObject card))
+                {
+                    Destroy(card);
+                    challengeCards.Remove(challenge);
+                }
+                CityReactionManager.Instance.PlayReaction(challenge, ChallengeReactionLevel.Failure);
             }
         }
     }

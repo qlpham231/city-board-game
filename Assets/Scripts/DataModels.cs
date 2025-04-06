@@ -24,6 +24,8 @@ public enum Role {
 
 public enum ResourceType { Funding, Policy, Technology, Community, Land }
 
+public enum ChallengeReactionLevel { Success, Partial, Failure }
+
 [System.Serializable]
 public class Challenge
 {
@@ -109,6 +111,25 @@ public class Player
         PlayerNr = number;
         Role = role;
         Points = points; 
+    }
+}
+
+[System.Serializable]
+public class CityReaction
+{
+    public Challenge Challenge { get; }
+    public ChallengeReactionLevel ReactionLevel { get; }
+    public string NarrativeText { get; }
+    public Sprite VisualCue { get; }
+    public AudioClip ReactionSound { get; }
+
+    public CityReaction(Challenge challenge, ChallengeReactionLevel reactionLevel, string narrativeText, Sprite visualCue, AudioClip reactionSound)
+    {
+        Challenge = challenge;
+        ReactionLevel = reactionLevel;
+        NarrativeText = narrativeText;
+        VisualCue = visualCue;
+        ReactionSound = reactionSound;
     }
 }
 

@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public List<Challenge> challenges = new List<Challenge>();
     public List<Solution> solutions = new List<Solution>();
     public List<Resource> resources = new List<Resource>();
+    public List<CityReaction> allReactions = new List<CityReaction>();
 
     public UnityEvent<List<Player>> onPlayerListUpdated = new();
 
@@ -49,29 +50,44 @@ public class GameManager : MonoBehaviour
         
         resources = new List<Resource> { govGrant, volNetwork };
 
-        
 
-
-        challenges.Add(new Challenge(
+        Challenge houseShortage = new Challenge(
             "Housing Shortage",
             ChallengeType.LongTerm,
             5,
             new List<Solution> { campaignAir },
-            Resources.Load<Sprite>("Textures/HousingShortage")));
+            Resources.Load<Sprite>("Textures/HousingShortage"));
 
-        challenges.Add(new Challenge(
+        Challenge airCrisis = new Challenge(
             "Air Quality Crisis",
             ChallengeType.Sudden,
             10,
             new List<Solution> { campaignAir },
-            Resources.Load<Sprite>("Textures/AirQuality")));
+            Resources.Load<Sprite>("Textures/AirQuality"));
 
-        challenges.Add(new Challenge(
+        Challenge waterCrisis = new Challenge(
             "Water Supply Crisis",
             ChallengeType.Sudden,
             10,
             new List<Solution> {  },
-            Resources.Load<Sprite>("Textures/WaterCrisis")));
+            Resources.Load<Sprite>("Textures/WaterCrisis"));
+
+        challenges = new List<Challenge> { houseShortage, airCrisis, waterCrisis };
+
+
+        allReactions.Add(new CityReaction(
+            houseShortage,
+            ChallengeReactionLevel.Success,
+            "New neighborhoods begin to take shape across the city. Families find hope in affordable homes. Community support rises.",
+            Resources.Load<Sprite>("Textures/HousingShortageSuccess"),
+            Resources.Load<AudioClip>("Audio/construction")));
+        
+        allReactions.Add(new CityReaction(
+            houseShortage,
+            ChallengeReactionLevel.Failure,
+            "Infrastructure breakdowns lead to increased accidents and power outages. Public safety is compromised.",
+            Resources.Load<Sprite>("Textures/HousingShortageFailure"),
+            Resources.Load<AudioClip>("Audio/crowd-worried")));
     }
 
 

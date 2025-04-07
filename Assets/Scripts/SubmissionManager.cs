@@ -211,7 +211,9 @@ public class SubmissionManager : MonoBehaviour
 
         // ✅ Step 4: Register the solution and update game state
         // selectedPlayer.SubmitSolution(selectedSolution);
+        selectedSolution.Owner = selectedPlayer;
         acceptedSolutions.Add(selectedSolution);
+        GameManager.Instance.implementedSolutions.Add(selectedSolution);
         ScoreManager.Instance.CalculateScores(selectedPlayer, selectedSolution, selectedResources);
         ChallengeManager.Instance.ResolveChallenge(selectedChallenge);
         CityReactionManager.Instance.PlayReaction(selectedChallenge, ChallengeReactionLevel.Success);
@@ -235,7 +237,12 @@ public class SubmissionManager : MonoBehaviour
     private bool ValidateResources(Solution solution, List<KeyValuePair<Player, Resource>> selectedResources)
     {
         Dictionary<ResourceType, int> requiredResources = new Dictionary<ResourceType, int>(solution.RequiredResources);
-        
+
+        List<Player> contributingPlayers = selectedResources
+            .Select(kvp => kvp.Key)
+            .Distinct()
+            .ToList();
+
         foreach (var kvp in selectedResources)
         {
             Resource resource = kvp.Value;
@@ -263,9 +270,10 @@ public class SubmissionManager : MonoBehaviour
             {
                 Debug.Log($"Missing {required.Value} of resource type {required.Key}.");
                 return false;
-            }
+            } 
         }
 
+        solution.Contributors = contributingPlayers;
         return true;
     }
 

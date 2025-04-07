@@ -120,6 +120,99 @@ public class ScoreManager : MonoBehaviour
         PlayerScores[player] = Math.Max(0, PlayerScores[player]);
     }
 
+    public int CalculateRoleScore(Player player)
+    {
+        int score = 0;
+
+        // Get the goal that matches this player's role
+        RoleGoal goal = GameManager.Instance.roleGoals.Find(g => g.Role == player.Role);
+        List<Solution> implementedSolutions = GameManager.Instance.implementedSolutions;
+
+        if (goal == null) return 0;
+
+        int completed = 0;
+        int completed2 = 0;
+
+        if (player.Role == Role.CityOfficial || player.Role == Role.PrivateRep || player.Role == Role.EnvAdvocate)
+        {
+            foreach (Solution s in implementedSolutions)
+            {
+                // Is this required solution implemented?
+                if (goal.PossibleSolutions.Contains(s))
+                {
+                    completed++;
+                }
+            }
+        }
+        else if (player.Role == Role.Citizen)
+        {
+            foreach (Solution s in implementedSolutions)
+            {
+                // Is this required solution implemented?
+                if (goal.PossibleSolutions.Contains(s))
+                {
+                    // Check if player contributed to it (owner or helper)
+                    if (s.Contributors.Contains(player))
+                    {
+                        completed++;
+                    }
+                }
+            }
+        }
+        else if (player.Role == Role.ExternalCollaborator)
+        {
+            foreach (Solution s in implementedSolutions)
+            {
+                // Is this required solution implemented?
+                if (goal.PossibleSolutions.Contains(s))
+                {
+                    completed++;
+                }
+
+                if (s.Contributors.Contains(player) && s.Owner != player)
+                {
+                    completed2++;
+                }
+            }
+        }
+
+        if (player.Role == Role.ExternalCollaborator)
+        {
+            if (completed >= goal.RequiredCount && completed2 >= 1)
+            {
+                score += goal.FullPoints;
+            } 
+            else if (completed >= goal.RequiredCount && completed2 < 1)
+            {
+                float ratio = (float)goal.RequiredCount / (goal.RequiredCount + 1);
+                score += Mathf.RoundToInt(goal.FullPoints * ratio);
+            }
+            else if (completed < goal.RequiredCount && completed2 >= 1)
+            {
+                float ratio = (float)(completed + 1) / (goal.RequiredCount + 1);
+                score += Mathf.RoundToInt(goal.FullPoints * ratio);
+            } else
+            {
+                float ratio = (float)completed / (goal.RequiredCount + 1);
+                score += Mathf.RoundToInt(goal.FullPoints * ratio);
+            }
+        }
+        else
+        {
+            if (completed >= goal.RequiredCount)
+            {
+                score += goal.FullPoints;
+            }
+            else
+            {
+                float ratio = (float)completed / goal.RequiredCount;
+                score += Mathf.RoundToInt(goal.FullPoints * ratio);
+            }
+        }
+
+        return score;
+    }
+
     public void ApplyPenalty(int penaltyPoints)
     {
         Debug.Log($"Applying penalty: -{penaltyPoints} points");
@@ -131,6 +224,15 @@ public class ScoreManager : MonoBehaviour
         GameManager.Instance.playerList.ForEach(player => AddPointsToPlayer(player, -penaltyPerPlayer));
 
         cityTransformationPointsText.text = "City transformation points: " + CityTransformationScore;
+    }
+
+    public void ApplyFinalRoleScore()
+    {
+        foreach(Player p in GameManager.Instance.playerList)
+        {
+            int score = CalculateRoleScore(p);
+            AddPointsToPlayer(p, score);
+        }
     }
 
     public void ShowPostGameSummary()

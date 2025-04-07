@@ -12,7 +12,7 @@ public class ChallengeManager : MonoBehaviour
     public List<Challenge> availableLongTermChallenges; // List of long-term challenges
     public List<Challenge> availableSuddenCrises; // List of sudden crises challenges
     private List<Challenge> activeChallenges = new();
-    private Dictionary<Challenge, int> challengeStartRounds = new();
+    private Dictionary<Challenge, int> challengeStartRounds = new(); // Maps challenge to start round
     private Dictionary<Challenge, GameObject> challengeCards = new(); // Maps challenge to its UI card
 
     private int consecutiveCrises = 0;
@@ -47,33 +47,45 @@ public class ChallengeManager : MonoBehaviour
 
     private void DisplayChallengeCard()
     {
-        Challenge selectedChallenge = null;
-
         // Draws a long-term challenge in Round 1 and Round 3
         if (GameManager.Instance.currentRound == 1 || GameManager.Instance.currentRound == 3)
         {
-            selectedChallenge = DrawUniqueChallenge(ref availableLongTermChallenges);
-        }
-
-        if (GameManager.Instance.currentRound > 1 && Random.value < crisisChance && consecutiveCrises < 2)
-        {
-            selectedChallenge = DrawUniqueChallenge(ref availableSuddenCrises);
-            consecutiveCrises++;
-            crisisChance = 0.2f; // Reset crisis chance
-        }
-        else
-        {
-            crisisChance += 0.2f; // Increase crisis probability for next round
-            consecutiveCrises = 0; // Reset consecutive crisis counter if no crisis occurs
-        }
-
-        if (selectedChallenge != null)
-        {
+            Challenge selectedChallenge = DrawUniqueChallenge(ref availableLongTermChallenges);
             activeChallenges.Add(selectedChallenge);
             challengeStartRounds[selectedChallenge] = GameManager.Instance.currentRound;
             onCurrentChallengesUpdated.Invoke(activeChallenges);
             DisplayChallenge(selectedChallenge);
+
         }
+
+        // Draws a short-term challenge in Round 2 and Round 4
+        if (GameManager.Instance.currentRound == 2 || GameManager.Instance.currentRound == 4)
+        {
+            Challenge selectedCrisis = DrawUniqueChallenge(ref availableSuddenCrises);
+            activeChallenges.Add(selectedCrisis);
+            challengeStartRounds[selectedCrisis] = GameManager.Instance.currentRound;
+            onCurrentChallengesUpdated.Invoke(activeChallenges);
+            DisplayChallenge(selectedCrisis);
+
+        }
+
+        //if (GameManager.Instance.currentRound > 1 && Random.value < crisisChance && consecutiveCrises < 2)
+        //{
+        //    Challenge selectedCrisis = DrawUniqueChallenge(ref availableSuddenCrises);
+        //    activeChallenges.Add(selectedCrisis);
+        //    challengeStartRounds[selectedCrisis] = GameManager.Instance.currentRound;
+        //    onCurrentChallengesUpdated.Invoke(activeChallenges);
+        //    DisplayChallenge(selectedCrisis);
+
+        //    consecutiveCrises++;
+        //    crisisChance = 0.2f; // Reset crisis chance
+        //}
+        //else
+        //{
+        //    crisisChance += 0.2f; // Increase crisis probability for next round
+        //    consecutiveCrises = 0; // Reset consecutive crisis counter if no crisis occurs
+        //}
+
     }
 
     private Challenge DrawUniqueChallenge(ref List<Challenge> challengeList)

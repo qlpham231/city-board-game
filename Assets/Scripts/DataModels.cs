@@ -55,13 +55,8 @@ public class Solution
     public Dictionary<ResourceType, int> RequiredResources { get; }
     public int[] ParameterChanges { get; }
 
-    // Fixed parameter fields
-    public int Transport { get; }
-    public int Ecological { get; }
-    public int WaterResources { get; }
-    public int Energy { get; }
-    public int AirQuality { get; }
-    public int Economy { get; }
+    public Player Owner { get; set; } // Who proposed it
+    public List<Player> Contributors { get; set; } // Who helped implement
 
     /// <summary>
     /// Creates a solution.
@@ -88,13 +83,13 @@ public class Resource
     public int CollabPoints { get; }
     public List<Role> CollabRoles { get; }
 
-    public Resource(string name, ResourceType type, int amount, List<Solution> solutions, int points, List<Role> collabRoles)
+    public Resource(string name, ResourceType type, int amount, List<Solution> solutions, int collabPoints, List<Role> collabRoles)
     {
         Name = name;
         ResourceType = type;
         Amount = amount;
         ApplicableSolutions = solutions;
-        CollabPoints = points;
+        CollabPoints = collabPoints;
         CollabRoles = collabRoles;
     }
 }
@@ -111,6 +106,22 @@ public class Player
         PlayerNr = number;
         Role = role;
         Points = points; 
+    }
+}
+
+[System.Serializable]
+public class RoleGoal
+{
+    public Role Role { get; }
+    public List<Solution> PossibleSolutions { get; }
+    public int RequiredCount { get; }
+    public int FullPoints = 10;
+
+    public RoleGoal(Role role, List<Solution> requiredSolutions, int requiredCount)
+    {
+        Role = role;
+        PossibleSolutions = requiredSolutions;
+        RequiredCount = requiredCount;
     }
 }
 

@@ -4,18 +4,23 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance; // Singleton for easy access
 
+    public Button openSubmissionPanelButton; // Button to end round and submit early
     public TextMeshProUGUI roundText;  // UI Text to display current round
     public TextMeshProUGUI timerText; // UI Text to show round timer
     public int roundDuration = 10;    // Set your round duration
     public int currentRound = 1;
 
+    private Coroutine timerCoroutine;
     private bool isSolutionSubmitted = false;
 
+    public List<Solution> implementedSolutions = new();
+    public List<RoleGoal> roleGoals = new();
     public List<Player> playerList = new List<Player>();
     public List<Challenge> challenges = new List<Challenge>();
     public List<Solution> solutions = new List<Solution>();
@@ -39,30 +44,83 @@ public class GameManager : MonoBehaviour
         InitializeData();
     }
 
+    private void Start()
+    {
+        openSubmissionPanelButton.onClick.AddListener(() =>
+        {
+            StopCoroutine(timerCoroutine); // Stop the timer
+            openSubmissionPanelButton.interactable = false;
+            EndRound(); // Ends the round
+        });
+
+        openSubmissionPanelButton.interactable = false;
+    }
+
     private void InitializeData()
     {
-        Solution campaignAir = new Solution("Public Awareness Campaign on Air Quality", 6, 3, new List<Role> { Role.PrivateRep, Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Community, 3 } }, new int[]{ 1, 2, 0, 0, 3, 1 });
-        solutions = new List<Solution> { campaignAir };
+        Solution tollTaxFreeEV = new Solution("Make Toll Tax Free on EVs", 6, 2, new List<Role> { Role.EnvAdvocate }, new Dictionary<ResourceType, int> { { ResourceType.Policy, 2 } }, new int[] { 2, 1, 0, 1, 2, 1 });
+        Solution elVehicleIncen = new Solution("Electric Vehicle Incentive Program", 8, 3, new List<Role> { Role.PrivateRep, Role.Citizen }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 4 }, { ResourceType.Policy, 4 } }, new int[] { 3, 2, 0, 1, 3, 1 });
+        Solution waterMoniPol = new Solution("Water Usage Monitoring Policy", 7, 3, new List<Role> { Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 2 }, { ResourceType.Policy, 3 } }, new int[] { 2, 1, 0, 1, 2, 1 });
+        Solution waterConserPol = new Solution("Water Conservation Policy", 8, 2, new List<Role> { Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 4 }, { ResourceType.Policy, 2 } }, new int[] { 2, 1, 0, 1, 2, 1 });
+        Solution aparConstr = new Solution("Apartment Construction Initiative", 10, 4, new List<Role> { Role.ExternalCollaborator }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 8 }, { ResourceType.Land, 5 }, { ResourceType.Policy, 4 } }, new int[] { 2, 1, 0, 1, 2, 1 });
+        Solution builRow = new Solution("Building Row Houses", 9, 0, null, new Dictionary<ResourceType, int> { { ResourceType.Funding, 6 }, { ResourceType.Land, 7 }, { ResourceType.Policy, 3 } }, new int[] { 2, 1, 0, 1, 2, 1 });
+        Solution elVehicleRental = new Solution("Electrical Vehicle Rental Program", 7, 2, new List<Role> { Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 5 } }, new int[] { 2, 1, 0, 1, 2, 1 });
+        Solution pubPriPart = new Solution("Public-Private Partnership (PPP)", 6, 2, new List<Role> { Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Policy, 2 } }, new int[] { 2, 1, 0, 1, 2, 1 });
+        Solution smaIrrTech = new Solution("Smart Irrigation Technology", 8, 0, null, new Dictionary<ResourceType, int> { { ResourceType.Technology, 5 }, { ResourceType.Funding, 3 } }, new int[] { 2, 1, 0, 1, 2, 1 });
+        Solution greenBuil = new Solution("Green Building Standards", 8, 0, null, new Dictionary<ResourceType, int> { { ResourceType.Policy, 3 }, { ResourceType.Funding, 2 } }, new int[] { 2, 1, 0, 1, 2, 1 });
+        Solution pubAwareAir = new Solution("Public Awareness Campaign on Air Quality", 6, 3, new List<Role> { Role.PrivateRep, Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Community, 3 } }, new int[]{ 1, 2, 0, 0, 3, 1 });
+        Solution urbForest = new Solution("Urban Forest Program", 7, 2, new List<Role> { Role.Citizen }, new Dictionary<ResourceType, int> { { ResourceType.Community, 4 }, { ResourceType.Funding, 3 }, { ResourceType.Land, 2 } }, new int[] { 1, 2, 0, 0, 3, 1 });
+        Solution waterConserAwareCam = new Solution("Water Conservation Awareness Campaign", 6, 3, new List<Role> { Role.Citizen }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 1 }, { ResourceType.Community, 3 } }, new int[] { 3, 2, 0, 1, 3, 1 });
+        Solution freePubTrans = new Solution("Free Public Transport Program", 9, 3, new List<Role> { Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 4 }, { ResourceType.Policy, 3 } }, new int[] { 3, 2, 0, 1, 3, 1 });
+        Solution subsEvPur = new Solution("Subsidized EV Purchase Program", 8, 3, new List<Role> { Role.CityOfficial, Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Policy, 2 } }, new int[] { 3, 2, 0, 1, 3, 1 });
+        Solution subsAparCon = new Solution("Subsidized Apartment Construction", 10, 0, null, new Dictionary<ResourceType, int> { { ResourceType.Funding, 6 } }, new int[] { 3, 2, 0, 1, 3, 1 });
+        Solution cityPlanHou = new Solution("City Plan Sharing for Housing Crisis", 5, 0, null, new Dictionary<ResourceType, int> { }, new int[] { 3, 2, 0, 1, 3, 1 });
+
+        Solution waterResSha = new Solution("Water Resource Sharing Agreement", 5, 2, new List<Role> { Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Community, 2 }, { ResourceType.Policy, 2 } }, new int[] { 3, 2, 0, 1, 3, 1 });
+        Solution waterRecTech = new Solution("Water Recycling Technology Introduction", 9, 3, new List<Role> { Role.EnvAdvocate }, new Dictionary<ResourceType, int> { { ResourceType.Technology, 3 } }, new int[] { 3, 2, 0, 1, 3, 1 });
+        Solution airMoniTech = new Solution("Air Quality Monitoring Technology", 10, 3, new List<Role> { Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Technology, 4 } }, new int[] { 3, 2, 0, 1, 3, 1 });
+
+        solutions = new List<Solution> { tollTaxFreeEV, elVehicleIncen, waterMoniPol, waterConserPol, aparConstr, builRow, elVehicleRental, pubPriPart,
+        smaIrrTech, greenBuil, pubAwareAir, urbForest, waterConserAwareCam, freePubTrans, subsEvPur, subsAparCon, cityPlanHou, waterResSha, waterRecTech,
+        airMoniTech
+        };
 
         Resource govGrant = new Resource("Government Grant", ResourceType.Funding, 10, null, 2, new List<Role> { Role.EnvAdvocate, Role.Citizen });
+        Resource techGrant = new Resource("Technology Grant", ResourceType.Funding, 8, new List<Solution> { smaIrrTech, waterRecTech, airMoniTech }, 0, null);
+        Resource volNetwork = new Resource("Volunteer Network", ResourceType.Community, 3, null, 0, null);
+        Resource lobbying = new Resource("Lobbying Effort", ResourceType.Policy, 3, null, 0, null);
+        Resource polSupport = new Resource("Political Support", ResourceType.Policy, 2, null, 2, new List<Role> { Role.EnvAdvocate });
+        Resource landAqui = new Resource("Land Acquisition", ResourceType.Land, 10, null, 2, new List<Role> { Role.EnvAdvocate, Role.Citizen });
+        Resource corSponsor = new Resource("Corporate Sponsorship", ResourceType.Technology, 5, null, 2, new List<Role> { Role.CityOfficial, Role.PrivateRep, Role.EnvAdvocate });
+        Resource hackathon = new Resource("Hackathon Initiative", ResourceType.Technology, 3, null, 2, new List<Role> { Role.CityOfficial, Role.PrivateRep });
+        Resource finInvest = new Resource("Financial Investment", ResourceType.Funding, 10, null, 2, new List<Role> { Role.CityOfficial });
+        Resource comCrowdFun = new Resource("Community Crowdfunding", ResourceType.Funding, 5, new List<Solution> { pubAwareAir, urbForest, waterConserAwareCam }, 2, new List<Role> { Role.Citizen });
 
-        Resource volNetwork = new Resource("Volunteer Network", ResourceType.Community, 3, new List<Solution> { campaignAir }, 0, null);
-        
-        resources = new List<Resource> { govGrant, volNetwork };
+        resources = new List<Resource> { govGrant, techGrant, volNetwork, lobbying, polSupport, landAqui, corSponsor, hackathon, finInvest, comCrowdFun };
+
+        roleGoals.Add(new RoleGoal(Role.CityOfficial, new List<Solution> { tollTaxFreeEV }, 1));
+        //roleGoals.Add(new RoleGoal(Role.PrivateRep, new List<Solution> { tollTaxFreeEV }, 1));
 
 
         Challenge houseShortage = new Challenge(
             "Housing Shortage",
             ChallengeType.LongTerm,
             5,
-            new List<Solution> { campaignAir },
+            new List<Solution> { pubAwareAir, tollTaxFreeEV },
+            Resources.Load<Sprite>("Textures/HousingShortage"));
+
+        Challenge agingInfra = new Challenge(
+            "Aging Infrastructure",
+            ChallengeType.LongTerm,
+            5,
+            new List<Solution> { pubAwareAir },
             Resources.Load<Sprite>("Textures/HousingShortage"));
 
         Challenge airCrisis = new Challenge(
             "Air Quality Crisis",
             ChallengeType.Sudden,
             10,
-            new List<Solution> { campaignAir },
+            new List<Solution> { pubAwareAir },
             Resources.Load<Sprite>("Textures/AirQuality"));
 
         Challenge waterCrisis = new Challenge(
@@ -72,7 +130,7 @@ public class GameManager : MonoBehaviour
             new List<Solution> {  },
             Resources.Load<Sprite>("Textures/WaterCrisis"));
 
-        challenges = new List<Challenge> { houseShortage, airCrisis, waterCrisis };
+        challenges = new List<Challenge> { houseShortage, agingInfra, airCrisis, waterCrisis };
 
 
         allReactions.Add(new CityReaction(
@@ -85,11 +143,55 @@ public class GameManager : MonoBehaviour
         allReactions.Add(new CityReaction(
             houseShortage,
             ChallengeReactionLevel.Failure,
-            "Infrastructure breakdowns lead to increased accidents and power outages. Public safety is compromised.",
+            "The housing crisis deepens. Families sleep in shelters while public pressure mounts. Approval ratings drop.",
             Resources.Load<Sprite>("Textures/HousingShortageFailure"),
             Resources.Load<AudioClip>("Audio/crowd-worried")));
-    }
 
+
+        allReactions.Add(new CityReaction(
+            agingInfra,
+            ChallengeReactionLevel.Success,
+            "Major repairs breathe new life into the city. Power outages decrease, and commuters rejoice.",
+            Resources.Load<Sprite>("Textures/AgingInfraSuccess"),
+            Resources.Load<AudioClip>("Audio/road-hammer-drill-machine-short")));
+
+        allReactions.Add(new CityReaction(
+            agingInfra,
+            ChallengeReactionLevel.Failure,
+            "Infrastructure breakdowns lead to increased accidents and power outages. Public safety is compromised.",
+            Resources.Load<Sprite>("Textures/AgingInfraFailure"),
+            Resources.Load<AudioClip>("Audio/distant-ambulance-siren")));
+
+
+        allReactions.Add(new CityReaction(
+            airCrisis,
+            ChallengeReactionLevel.Success,
+            "Air quality improves dramatically. Health clinics report fewer respiratory cases. Citizens breathe easier — literally.",
+            Resources.Load<Sprite>("Textures/AirCrisisSuccess"),
+            Resources.Load<AudioClip>("Audio/birds-chirping")));
+
+        allReactions.Add(new CityReaction(
+            airCrisis,
+            ChallengeReactionLevel.Failure,
+            "Air quality worsens. Hospitals report spikes in asthma and related illnesses. Public frustration escalates.",
+            Resources.Load<Sprite>("Textures/AirCrisisFailure"),
+            Resources.Load<AudioClip>("Audio/coughing")));
+        
+
+        allReactions.Add(new CityReaction(
+            waterCrisis,
+            ChallengeReactionLevel.Success,
+            "Water conservation and innovation ensure a reliable supply. Drought resilience becomes a city success story.",
+            Resources.Load<Sprite>("Textures/WaterCrisisSuccess"),
+            Resources.Load<AudioClip>("Audio/water-small-stream")));
+
+        allReactions.Add(new CityReaction(
+            waterCrisis,
+            ChallengeReactionLevel.Failure,
+            "The city enters emergency water rationing. Public anger grows as daily life is disrupted.",
+            Resources.Load<Sprite>("Textures/WaterCrisisFailure"),
+            Resources.Load<AudioClip>("Audio/bushes-medium-heavy-wind-in-dry-vegetation")));
+    }
 
     public void SetPlayers(List<Player> players)
     {
@@ -114,7 +216,8 @@ public class GameManager : MonoBehaviour
     {
         roundText.text = "Round " + currentRound + " of 4";
         ChallengeManager.Instance.StartNewRound();
-        StartCoroutine(StartRoundTimer());
+        timerCoroutine = StartCoroutine(StartRoundTimer());
+        openSubmissionPanelButton.interactable = true;
     }
 
     private IEnumerator StartRoundTimer()
@@ -130,6 +233,7 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
+        openSubmissionPanelButton.interactable= false;
         EndRound();
     }
 
@@ -168,7 +272,7 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("Game Over! Final scores calculated.");
-            // TODO: Show final score UI
+            ScoreManager.Instance.ApplyFinalRoleScore();
             ScoreManager.Instance.ShowPostGameSummary();
         }
     }

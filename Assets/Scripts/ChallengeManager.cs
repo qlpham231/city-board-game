@@ -134,7 +134,7 @@ public class ChallengeManager : MonoBehaviour
             Debug.Log($"Challenge '{challenge.Name}' resolved by player.");
             activeChallenges.Remove(challenge);
             challengeStartRounds.Remove(challenge);
-            onCurrentChallengesUpdated.Invoke(activeChallenges);
+            //onCurrentChallengesUpdated.Invoke(activeChallenges);
         }
 
         if (challengeCards.TryGetValue(challenge, out GameObject card))

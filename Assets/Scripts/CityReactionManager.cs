@@ -12,6 +12,7 @@ public class CityReactionManager : MonoBehaviour
     public TextMeshProUGUI narrativeTextUI;
     public GameObject reactionImage;
     public AudioSource audioSource;
+    public GameObject narrativePanel;
 
     private void Awake()
     {
@@ -19,6 +20,11 @@ public class CityReactionManager : MonoBehaviour
             Instance = this;
         else
             Destroy(gameObject);
+    }
+
+    private void Start()
+    {
+        narrativePanel.SetActive(false);
     }
 
     public void PlayReaction(Challenge challenge, ChallengeReactionLevel level)
@@ -37,6 +43,7 @@ public class CityReactionManager : MonoBehaviour
 
     private void ShowReaction(CityReaction reaction)
     {
+        narrativePanel.SetActive(true);
         narrativeTextUI.text = reaction.NarrativeText;
         reactionImage.GetComponent<Image>().sprite = reaction.VisualCue;
         //reactionImage.sprite = reaction.visualCue;

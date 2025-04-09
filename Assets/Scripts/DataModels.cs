@@ -117,10 +117,10 @@ public class RoleGoal
     public int RequiredCount { get; }
     public int FullPoints = 10;
 
-    public RoleGoal(Role role, List<Solution> requiredSolutions, int requiredCount)
+    public RoleGoal(Role role, List<Solution> possibleSolutions, int requiredCount)
     {
         Role = role;
-        PossibleSolutions = requiredSolutions;
+        PossibleSolutions = possibleSolutions;
         RequiredCount = requiredCount;
     }
 }

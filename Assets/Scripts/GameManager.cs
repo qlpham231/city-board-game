@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public Button openSubmissionPanelButton; // Button to end round and submit early
     public TextMeshProUGUI roundText;  // UI Text to display current round
     public TextMeshProUGUI timerText; // UI Text to show round timer
-    public int roundDuration = 10;    // Set your round duration
+    public int roundDuration = 900;    // Set your round duration
     public int currentRound = 1;
 
     private Coroutine timerCoroutine;
@@ -58,31 +58,37 @@ public class GameManager : MonoBehaviour
 
     private void InitializeData()
     {
-        Solution tollTaxFreeEV = new Solution("Make Toll Tax Free on EVs", 6, 2, new List<Role> { Role.EnvAdvocate }, new Dictionary<ResourceType, int> { { ResourceType.Policy, 2 } }, new int[] { 2, 1, 0, 1, 2, 1 });
-        Solution elVehicleIncen = new Solution("Electric Vehicle Incentive Program", 8, 3, new List<Role> { Role.PrivateRep, Role.Citizen }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 4 }, { ResourceType.Policy, 4 } }, new int[] { 3, 2, 0, 1, 3, 1 });
-        Solution waterMoniPol = new Solution("Water Usage Monitoring Policy", 7, 3, new List<Role> { Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 2 }, { ResourceType.Policy, 3 } }, new int[] { 2, 1, 0, 1, 2, 1 });
-        Solution waterConserPol = new Solution("Water Conservation Policy", 8, 2, new List<Role> { Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 4 }, { ResourceType.Policy, 2 } }, new int[] { 2, 1, 0, 1, 2, 1 });
-        Solution aparConstr = new Solution("Apartment Construction Initiative", 10, 4, new List<Role> { Role.ExternalCollaborator }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 8 }, { ResourceType.Land, 5 }, { ResourceType.Policy, 4 } }, new int[] { 2, 1, 0, 1, 2, 1 });
-        Solution builRow = new Solution("Building Row Houses", 9, 0, null, new Dictionary<ResourceType, int> { { ResourceType.Funding, 6 }, { ResourceType.Land, 7 }, { ResourceType.Policy, 3 } }, new int[] { 2, 1, 0, 1, 2, 1 });
-        Solution elVehicleRental = new Solution("Electrical Vehicle Rental Program", 7, 2, new List<Role> { Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 5 } }, new int[] { 2, 1, 0, 1, 2, 1 });
-        Solution pubPriPart = new Solution("Public-Private Partnership (PPP)", 6, 2, new List<Role> { Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Policy, 2 } }, new int[] { 2, 1, 0, 1, 2, 1 });
-        Solution smaIrrTech = new Solution("Smart Irrigation Technology", 8, 0, null, new Dictionary<ResourceType, int> { { ResourceType.Technology, 5 }, { ResourceType.Funding, 3 } }, new int[] { 2, 1, 0, 1, 2, 1 });
-        Solution greenBuil = new Solution("Green Building Standards", 8, 0, null, new Dictionary<ResourceType, int> { { ResourceType.Policy, 3 }, { ResourceType.Funding, 2 } }, new int[] { 2, 1, 0, 1, 2, 1 });
-        Solution pubAwareAir = new Solution("Public Awareness Campaign on Air Quality", 6, 3, new List<Role> { Role.PrivateRep, Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Community, 3 } }, new int[]{ 1, 2, 0, 0, 3, 1 });
-        Solution urbForest = new Solution("Urban Forest Program", 7, 2, new List<Role> { Role.Citizen }, new Dictionary<ResourceType, int> { { ResourceType.Community, 4 }, { ResourceType.Funding, 3 }, { ResourceType.Land, 2 } }, new int[] { 1, 2, 0, 0, 3, 1 });
-        Solution waterConserAwareCam = new Solution("Water Conservation Awareness Campaign", 6, 3, new List<Role> { Role.Citizen }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 1 }, { ResourceType.Community, 3 } }, new int[] { 3, 2, 0, 1, 3, 1 });
-        Solution freePubTrans = new Solution("Free Public Transport Program", 9, 3, new List<Role> { Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 4 }, { ResourceType.Policy, 3 } }, new int[] { 3, 2, 0, 1, 3, 1 });
-        Solution subsEvPur = new Solution("Subsidized EV Purchase Program", 8, 3, new List<Role> { Role.CityOfficial, Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Policy, 2 } }, new int[] { 3, 2, 0, 1, 3, 1 });
-        Solution subsAparCon = new Solution("Subsidized Apartment Construction", 10, 0, null, new Dictionary<ResourceType, int> { { ResourceType.Funding, 6 } }, new int[] { 3, 2, 0, 1, 3, 1 });
-        Solution cityPlanHou = new Solution("City Plan Sharing for Housing Crisis", 5, 0, null, new Dictionary<ResourceType, int> { }, new int[] { 3, 2, 0, 1, 3, 1 });
+        Solution tollTaxFreeEV = new Solution("Make Toll Tax Free on EVs", 6, 2, new List<Role> { Role.EnvAdvocate }, new Dictionary<ResourceType, int> { { ResourceType.Policy, 2 } }, new int[] { 1, 1, 0, -1, 1, 0 });
+        Solution elVehicleIncen = new Solution("Electric Vehicle Incentive Program", 8, 3, new List<Role> { Role.PrivateRep, Role.Citizen }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 4 }, { ResourceType.Policy, 4 } }, new int[] { 2, 1, 0, -1, 2, -1 });
+        Solution waterMoniPol = new Solution("Water Usage Monitoring Policy", 7, 3, new List<Role> { Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 2 }, { ResourceType.Policy, 3 } }, new int[] { 0, 1, 2, -1, 0, 1 });
+        Solution waterConserPol = new Solution("Water Conservation Policy", 8, 2, new List<Role> { Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 4 }, { ResourceType.Policy, 2 } }, new int[] { 0, 1, 3, 0, 0, -1 });
+        Solution aparConstr = new Solution("Apartment Construction Initiative", 10, 4, new List<Role> { Role.ExternalCollaborator }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 8 }, { ResourceType.Land, 5 }, { ResourceType.Policy, 4 } }, new int[] { 1, -2, -1, -1, -1, 2 });
+        Solution builRow = new Solution("Building Row Houses", 9, 0, null, new Dictionary<ResourceType, int> { { ResourceType.Funding, 6 }, { ResourceType.Land, 7 }, { ResourceType.Policy, 3 } }, new int[] { 0, -1, -1, 0, 0, 2 });
+        Solution elVehicleRental = new Solution("Electrical Vehicle Rental Program", 7, 2, new List<Role> { Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 5 } }, new int[] { 2, 1, 0, -1, 2, 1 });
+        Solution pubPriPart = new Solution("Public-Private Partnership (PPP)", 6, 2, new List<Role> { Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Policy, 2 } }, new int[] { 1, -1, -1, 0, 0, 2 });
+        Solution smaIrrTech = new Solution("Smart Irrigation Technology", 8, 0, null, new Dictionary<ResourceType, int> { { ResourceType.Technology, 5 }, { ResourceType.Funding, 3 } }, new int[] { 0, 2, 2, -1, 0, 0 });
+        Solution greenBuil = new Solution("Green Building Standards", 8, 0, null, new Dictionary<ResourceType, int> { { ResourceType.Policy, 3 }, { ResourceType.Funding, 2 } }, new int[] { 0, 2, 1, 2, 1, -1 });
+        Solution pubAwareAir = new Solution("Public Awareness Campaign on Air Quality", 6, 3, new List<Role> { Role.PrivateRep, Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Community, 3 } }, new int[] { 1, 1, 0, 0, 2, 0 });
+        Solution urbForest = new Solution("Urban Forest Program", 7, 2, new List<Role> { Role.Citizen }, new Dictionary<ResourceType, int> { { ResourceType.Community, 4 }, { ResourceType.Funding, 3 }, { ResourceType.Land, 2 } }, new int[] { 0, 3, 2, 0, 2, -1 });
+        Solution waterConserAwareCam = new Solution("Water Conservation Awareness Campaign", 6, 3, new List<Role> { Role.Citizen }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 1 }, { ResourceType.Community, 3 } }, new int[] { 0, 1, 2, 0, 0, 0 });
+        Solution freePubTrans = new Solution("Free Public Transport Program", 9, 3, new List<Role> { Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 4 }, { ResourceType.Policy, 3 } }, new int[] { 3, 1, 0, -1, 2, -1 });
+        Solution subsEvPur = new Solution("Subsidized EV Purchase Program", 8, 3, new List<Role> { Role.CityOfficial, Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Policy, 2 } }, new int[] { 2, 1, 0, -1, 2, -1 });
+        Solution subsAparCon = new Solution("Subsidized Apartment Construction", 10, 0, null, new Dictionary<ResourceType, int> { { ResourceType.Funding, 6 } }, new int[] { 1, -2, -1, -1, -1, 2 });
+        Solution cityPlanHou = new Solution("City Plan Sharing for Housing Crisis", 5, 0, null, new Dictionary<ResourceType, int> { }, new int[] { 1, 0, 0, 0, 0, 1 });
+        Solution waterResSha = new Solution("Water Resource Sharing Agreement", 5, 2, new List<Role> { Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Community, 2 }, { ResourceType.Policy, 2 } }, new int[] { 0, 0, 2, 0, 0, 1 });
+        Solution waterRecTech = new Solution("Water Recycling Technology Introduction", 9, 3, new List<Role> { Role.EnvAdvocate }, new Dictionary<ResourceType, int> { { ResourceType.Technology, 3 } }, new int[] { 0, 1, 3, -1, 0, 0 });
+        Solution airMoniTech = new Solution("Air Quality Monitoring Technology", 10, 3, new List<Role> { Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Technology, 4 } }, new int[] { 1, 0, 0, -1, 3, 1 });
 
-        Solution waterResSha = new Solution("Water Resource Sharing Agreement", 5, 2, new List<Role> { Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Community, 2 }, { ResourceType.Policy, 2 } }, new int[] { 3, 2, 0, 1, 3, 1 });
-        Solution waterRecTech = new Solution("Water Recycling Technology Introduction", 9, 3, new List<Role> { Role.EnvAdvocate }, new Dictionary<ResourceType, int> { { ResourceType.Technology, 3 } }, new int[] { 3, 2, 0, 1, 3, 1 });
-        Solution airMoniTech = new Solution("Air Quality Monitoring Technology", 10, 3, new List<Role> { Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Technology, 4 } }, new int[] { 3, 2, 0, 1, 3, 1 });
+        Solution smartInfraIni = new Solution("Smart Infrastructure Initiative", 8, 3, new List<Role> { Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Technology, 5 } }, new int[] { 2, 1, 1, -1, 1, 1 });
+        Solution fastContruCon = new Solution("Fast-Track Construction Contracts", 7, 3, new List<Role> { Role.CityOfficial, Role.ExternalCollaborator }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Policy, 4 } }, new int[] { 2, -1, 0, -1, -1, 2 });
+        Solution greenInfraRe = new Solution("Green Infrastructure Retrofit", 8, 2, new List<Role> { Role.PrivateRep }, new Dictionary<ResourceType, int> { { ResourceType.Community, 4 }, { ResourceType.Policy, 3 } }, new int[] { 1, 2, 1, 0, 1, -1 });
+        Solution camSustainTra = new Solution("Campaign on Sustainable Transit", 6, 3, new List<Role> { Role.Citizen, Role.CityOfficial }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 3 }, { ResourceType.Community, 3 } }, new int[] { 2, 1, 0, -1, 1, 0 });
+        Solution volStreRep = new Solution("Volunteer-Led Street Repair Program", 7, 2, new List<Role> { Role.EnvAdvocate }, new Dictionary<ResourceType, int> { { ResourceType.Funding, 2 }, { ResourceType.Community, 4 } }, new int[] { 2, 1, 1, 0, 1, 0 });
+        Solution interInfraEx = new Solution("International Infrastructure Exchange", 5, 3, new List<Role> { Role.CityOfficial }, new Dictionary<ResourceType, int> { }, new int[] { 1, 0, 0, 0, 0, 1 });
 
         solutions = new List<Solution> { tollTaxFreeEV, elVehicleIncen, waterMoniPol, waterConserPol, aparConstr, builRow, elVehicleRental, pubPriPart,
         smaIrrTech, greenBuil, pubAwareAir, urbForest, waterConserAwareCam, freePubTrans, subsEvPur, subsAparCon, cityPlanHou, waterResSha, waterRecTech,
-        airMoniTech
+        airMoniTech, smartInfraIni, fastContruCon, greenInfraRe, camSustainTra, volStreRep, interInfraEx
         };
 
         Resource govGrant = new Resource("Government Grant", ResourceType.Funding, 10, null, 2, new List<Role> { Role.EnvAdvocate, Role.Citizen });
@@ -98,37 +104,40 @@ public class GameManager : MonoBehaviour
 
         resources = new List<Resource> { govGrant, techGrant, volNetwork, lobbying, polSupport, landAqui, corSponsor, hackathon, finInvest, comCrowdFun };
 
-        roleGoals.Add(new RoleGoal(Role.CityOfficial, new List<Solution> { tollTaxFreeEV }, 1));
-        //roleGoals.Add(new RoleGoal(Role.PrivateRep, new List<Solution> { tollTaxFreeEV }, 1));
+        roleGoals.Add(new RoleGoal(Role.CityOfficial, new List<Solution> { tollTaxFreeEV, elVehicleIncen, waterMoniPol, waterConserPol }, 3));
+        roleGoals.Add(new RoleGoal(Role.PrivateRep, new List<Solution> { smaIrrTech, waterRecTech, airMoniTech, smartInfraIni }, 2));
+        roleGoals.Add(new RoleGoal(Role.EnvAdvocate, new List<Solution> { greenBuil, urbForest, smaIrrTech, airMoniTech, pubAwareAir, waterRecTech, waterConserAwareCam, waterMoniPol, waterConserPol, greenInfraRe, camSustainTra, volStreRep }, 3));
+        roleGoals.Add(new RoleGoal(Role.Citizen, new List<Solution> { urbForest, greenBuil, waterConserAwareCam, pubAwareAir, freePubTrans, greenInfraRe, camSustainTra, volStreRep }, 3));
+        roleGoals.Add(new RoleGoal(Role.ExternalCollaborator, new List<Solution> { cityPlanHou, waterResSha, waterRecTech, airMoniTech, interInfraEx }, 2));
 
 
         Challenge houseShortage = new Challenge(
             "Housing Shortage",
             ChallengeType.LongTerm,
             5,
-            new List<Solution> { pubAwareAir, tollTaxFreeEV },
-            Resources.Load<Sprite>("Textures/HousingShortage"));
+            new List<Solution> { aparConstr, builRow, pubPriPart, greenBuil, subsAparCon, cityPlanHou, interInfraEx },
+            Resources.Load<Sprite>("Textures/Challenge Card 1"));
 
         Challenge agingInfra = new Challenge(
             "Aging Infrastructure",
             ChallengeType.LongTerm,
             5,
-            new List<Solution> { pubAwareAir },
-            Resources.Load<Sprite>("Textures/HousingShortage"));
+            new List<Solution> { smartInfraIni, fastContruCon, greenInfraRe, camSustainTra, volStreRep, interInfraEx, cityPlanHou },
+            Resources.Load<Sprite>("Textures/Challenge Card 4"));
 
         Challenge airCrisis = new Challenge(
             "Air Quality Crisis",
             ChallengeType.Sudden,
             10,
-            new List<Solution> { pubAwareAir },
-            Resources.Load<Sprite>("Textures/AirQuality"));
+            new List<Solution> { tollTaxFreeEV, elVehicleIncen, elVehicleRental, pubAwareAir, freePubTrans, subsEvPur, airMoniTech },
+            Resources.Load<Sprite>("Textures/Challenge Card 2"));
 
         Challenge waterCrisis = new Challenge(
             "Water Supply Crisis",
             ChallengeType.Sudden,
             10,
-            new List<Solution> {  },
-            Resources.Load<Sprite>("Textures/WaterCrisis"));
+            new List<Solution> { waterMoniPol, waterConserPol, smaIrrTech, urbForest, waterConserAwareCam, waterResSha, waterRecTech },
+            Resources.Load<Sprite>("Textures/Challenge Card 3"));
 
         challenges = new List<Challenge> { houseShortage, agingInfra, airCrisis, waterCrisis };
 
@@ -183,7 +192,7 @@ public class GameManager : MonoBehaviour
             ChallengeReactionLevel.Success,
             "Water conservation and innovation ensure a reliable supply. Drought resilience becomes a city success story.",
             Resources.Load<Sprite>("Textures/WaterCrisisSuccess"),
-            Resources.Load<AudioClip>("Audio/water-small-stream")));
+            Resources.Load<AudioClip>("Audio/flowing-water")));
 
         allReactions.Add(new CityReaction(
             waterCrisis,

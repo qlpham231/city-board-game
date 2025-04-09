@@ -29,6 +29,9 @@ public class SubmissionManager : MonoBehaviour
 
     private List<Solution> acceptedSolutions = new List<Solution>();
 
+    private Color greenColor = new Color(0f, 0.55f, 0f, 1f);
+    private Color redColor = new Color(0.85f, 0f, 0f, 1f);
+
     private void Awake()
     {
         if (Instance == null)
@@ -81,6 +84,7 @@ public class SubmissionManager : MonoBehaviour
     private void UpdateChallenges(List<Challenge> challenges)
     {
         List<string> challengeNames = challenges.Select(c => c.Name).ToList();
+        challengeNames = challengeNames.OrderBy(c => c, StringComparer.OrdinalIgnoreCase).ToList();
         challengeNames.Insert(0, "Select Challenge");
 
         foreach (TMP_Dropdown dropdown in GetComponentsInChildren<TMP_Dropdown>())
@@ -95,6 +99,12 @@ public class SubmissionManager : MonoBehaviour
 
     public void PopulateDropdowns(List<string> challenges, List<string> solutions, List<string> resources, List<string> players)
     {
+        // Sort alphabetically (case-insensitive) and assign back
+        challenges = challenges.OrderBy(c => c, StringComparer.OrdinalIgnoreCase).ToList();
+        solutions = solutions.OrderBy(s => s, StringComparer.OrdinalIgnoreCase).ToList();
+        resources = resources.OrderBy(r => r, StringComparer.OrdinalIgnoreCase).ToList();
+        players = players.OrderBy(p => p, StringComparer.OrdinalIgnoreCase).ToList();
+
         // Adding default options
         challenges.Insert(0, "Select Challenge");
         solutions.Insert(0, "Select Solution");
@@ -126,11 +136,13 @@ public class SubmissionManager : MonoBehaviour
 
         bool success1 = Validate(challengeDropdown1, solutionDropdown1, contributorDropdown1,
             resourceDropdown1_1, contributorDropdown1_1, resourceDropdown1_2, contributorDropdown1_2,
-            resourceDropdown1_3, contributorDropdown1_3, resourceDropdown1_4, contributorDropdown1_4);
+            resourceDropdown1_3, contributorDropdown1_3, resourceDropdown1_4, contributorDropdown1_4,
+            out Challenge challenge1, out Solution solution1);
 
         bool success2 = Validate(challengeDropdown2, solutionDropdown2, contributorDropdown2,
             resourceDropdown2_1, contributorDropdown2_1, resourceDropdown2_2, contributorDropdown2_2,
-            resourceDropdown2_3, contributorDropdown2_3, resourceDropdown2_4, contributorDropdown2_4);
+            resourceDropdown2_3, contributorDropdown2_3, resourceDropdown2_4, contributorDropdown2_4,
+            out Challenge challenge2, out Solution solution2);
 
 
         // Handle feedback based on whether solutions are valid or empty
@@ -143,23 +155,27 @@ public class SubmissionManager : MonoBehaviour
         {
             
             feedbackText.text = "Both solutions successfully applied!";
-            feedbackText.color = Color.green;
+            feedbackText.color = greenColor;
+            ChallengeManager.Instance.ResolveChallenge(challenge1);
+            ChallengeManager.Instance.ResolveChallenge(challenge2);
 
         }
         else if (success1)
         {
             feedbackText.text = "Solution 1 applied successfully!";
-            feedbackText.color = Color.green;
+            feedbackText.color = greenColor;
+            ChallengeManager.Instance.ResolveChallenge(challenge1);
         }
         else if (success2)
         {
             feedbackText.text = "Solution 2 applied successfully!";
-            feedbackText.color = Color.green;
+            feedbackText.color = greenColor;
+            ChallengeManager.Instance.ResolveChallenge(challenge2);
         }
         else
         {
             feedbackText.text = "Missing resources or invalid solution!";
-            feedbackText.color = Color.red;
+            feedbackText.color = redColor;
         }
 
         SpiderDiagram.Instance.UpdateSpiderDiagram(acceptedSolutions);
@@ -172,12 +188,16 @@ public class SubmissionManager : MonoBehaviour
                                  TMP_Dropdown resourceDropdown1, TMP_Dropdown contributorDropdown1,
                                  TMP_Dropdown resourceDropdown2, TMP_Dropdown contributorDropdown2,
                                  TMP_Dropdown resourceDropdown3, TMP_Dropdown contributorDropdown3,
-                                 TMP_Dropdown resourceDropdown4, TMP_Dropdown contributorDropdown4)
+                                 TMP_Dropdown resourceDropdown4, TMP_Dropdown contributorDropdown4,
+                                 out Challenge selectedChallenge, out Solution selectedSolution)
     {
+        selectedChallenge = null;
+        selectedSolution = null;
+
         if (challengeDropdown.value == 0 || solutionDropdown.value == 0 || playerDropdown.value == 0) { return false; }
 
-        Challenge selectedChallenge = GameManager.Instance.GetChallengeByName(challengeDropdown.options[challengeDropdown.value].text);
-        Solution selectedSolution = GameManager.Instance.GetSolutionByName(solutionDropdown.options[solutionDropdown.value].text);
+        selectedChallenge = GameManager.Instance.GetChallengeByName(challengeDropdown.options[challengeDropdown.value].text);
+        selectedSolution = GameManager.Instance.GetSolutionByName(solutionDropdown.options[solutionDropdown.value].text);
         Player selectedPlayer = GameManager.Instance.GetPlayerByName(playerDropdown.options[playerDropdown.value].text);
 
         if (selectedChallenge == null || selectedSolution == null || selectedPlayer == null)
@@ -215,7 +235,7 @@ public class SubmissionManager : MonoBehaviour
         acceptedSolutions.Add(selectedSolution);
         GameManager.Instance.implementedSolutions.Add(selectedSolution);
         ScoreManager.Instance.CalculateScores(selectedPlayer, selectedSolution, selectedResources);
-        ChallengeManager.Instance.ResolveChallenge(selectedChallenge);
+        //ChallengeManager.Instance.ResolveChallenge(selectedChallenge);
         CityReactionManager.Instance.PlayReaction(selectedChallenge, ChallengeReactionLevel.Success);
         return true;
     }

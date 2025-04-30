@@ -115,14 +115,14 @@ public class GameManager : MonoBehaviour
             "Housing Shortage",
             ChallengeType.LongTerm,
             5,
-            new List<Solution> { aparConstr, builRow, pubPriPart, greenBuil, subsAparCon, cityPlanHou, interInfraEx },
+            new List<Solution> { aparConstr, builRow, pubPriPart, greenBuil, subsAparCon, cityPlanHou },
             Resources.Load<Sprite>("Textures/Challenge Card 1"));
 
         Challenge agingInfra = new Challenge(
             "Aging Infrastructure",
             ChallengeType.LongTerm,
             5,
-            new List<Solution> { smartInfraIni, fastContruCon, greenInfraRe, camSustainTra, volStreRep, interInfraEx, cityPlanHou },
+            new List<Solution> { smartInfraIni, fastContruCon, greenInfraRe, camSustainTra, volStreRep, interInfraEx },
             Resources.Load<Sprite>("Textures/Challenge Card 4"));
 
         Challenge airCrisis = new Challenge(
@@ -231,14 +231,52 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator StartRoundTimer()
     {
+        //bool endAlertPlayed = false;
         float timeRemaining = roundDuration; // seconds
+        int lastWholeSecond = Mathf.CeilToInt(timeRemaining); // Initialize to avoid triggering pulse immediately
+
         while (timeRemaining > 0)
         {
             timeRemaining -= Time.deltaTime;
             timeRemaining = Mathf.Max(timeRemaining, 0); // Ensure it doesn't go below 0
+
+            int currentWholeSecond = Mathf.CeilToInt(timeRemaining);
             int minutes = Mathf.FloorToInt(timeRemaining / 60);
             int seconds = Mathf.FloorToInt(timeRemaining % 60);
             timerText.text = minutes + ":" + seconds.ToString("00");
+
+            if (currentWholeSecond != lastWholeSecond && timeRemaining > 0)
+            {
+                lastWholeSecond = currentWholeSecond;
+
+                if (currentWholeSecond <= 10)
+                {
+                    PulseEffect.Instance.pulseColor = Color.red;
+                    PulseEffect.Instance.TriggerPulse();
+                }
+                else if (currentWholeSecond <= 20)
+                {
+                    PulseEffect.Instance.pulseColor = Color.yellow;
+                    PulseEffect.Instance.TriggerPulse();
+                }
+                else if (currentWholeSecond <= 60 && currentWholeSecond % 10 == 0)
+                {
+                    PulseEffect.Instance.pulseColor = Color.yellow;
+                    PulseEffect.Instance.TriggerPulse();
+                }
+                else if (currentWholeSecond % 60 == 0)
+                {
+                    PulseEffect.Instance.pulseColor = PulseEffect.Instance.originalColor;
+                    PulseEffect.Instance.TriggerPulse();
+                }
+            }
+
+            //if (!endAlertPlayed && timeRemaining <= 1f)
+            //{
+            //    endAlertPlayed = true;
+            //    PulseEffect.Instance.PlayEndAlert();
+            //}
+
             yield return null;
         }
 

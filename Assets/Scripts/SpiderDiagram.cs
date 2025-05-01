@@ -37,12 +37,14 @@ public class SpiderDiagram : MonoBehaviour
 
     void DrawBaseLine()
     {
-        float scaleFactor = GetComponent<RectTransform>().rect.width / 460f;
-        float radius = 144f * scaleFactor;
+        //float scaleFactor = GetComponent<RectTransform>().rect.width / 460f;
+        //float radius = 144f * scaleFactor;
+        float radius = GetComponent<RectTransform>().rect.width / 2;
 
         float[] values = { parameters[0], parameters[1], parameters[2], parameters[3], parameters[4], parameters[5] };
 
         GameObject baseLine = Instantiate(linePrefab, transform);
+        baseLine.transform.localPosition = Vector3.zero;
         UILineRenderer uiLineRenderer = baseLine.GetComponent<UILineRenderer>();
 
         uiLineRenderer.color = Color.grey;
@@ -68,12 +70,14 @@ public class SpiderDiagram : MonoBehaviour
     void DrawLine(float transport, float ecological, float waterResources, float energy, float airQuality, float economy)
     {
         // Get the current scale factor based on the image width
-        float scaleFactor = GetComponent<RectTransform>().rect.width / 460f;
-        float radius = 144f * scaleFactor; // Adjust the radius dynamically
+        //float scaleFactor = GetComponent<RectTransform>().rect.width / 460f;
+        //float radius = 144f * scaleFactor; // Adjust the radius dynamically
+        float radius = GetComponent<RectTransform>().rect.width / 2;
 
         float[] values = { transport, ecological, waterResources, energy, airQuality, economy };
 
         GameObject newLine = Instantiate(linePrefab, transform); // Create a new line
+        newLine.transform.localPosition = Vector3.zero;
         UILineRenderer uiLineRenderer = newLine.GetComponent<UILineRenderer>();
 
         // Assign color according to round

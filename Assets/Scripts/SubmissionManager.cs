@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,7 +27,16 @@ public class SubmissionManager : MonoBehaviour
 
     [Header("UI Elements")]
     public Button submitButton;
+    public GameObject feedbackCanvas;
+
+    [Header("Feedback Popup Elements")]
+    public Image feedbackEmoji;
+    public TextMeshProUGUI feedbackTitle;
     public TextMeshProUGUI feedbackText;
+    public Sprite infoSprite;
+    public Sprite acceptedSprite;
+    public Sprite rejectedSprite;
+    public float popupDuration = 5f;
 
     private List<Solution> acceptedSolutions = new List<Solution>();
 
@@ -49,6 +60,7 @@ public class SubmissionManager : MonoBehaviour
     // To populate options for the dropdowns
     void Start()
     {
+        feedbackCanvas.SetActive(false);
         solutionSelectionCanvas.SetActive(false);
         submitButton.onClick.AddListener(SubmitSolution);
         GameManager.Instance.onPlayerListUpdated.AddListener(UpdatePlayers);
@@ -71,7 +83,7 @@ public class SubmissionManager : MonoBehaviour
             .ToList();
         playerNames.Insert(0, "Select Player");
 
-        foreach (TMP_Dropdown dropdown in GetComponentsInChildren<TMP_Dropdown>())
+        foreach (TMP_Dropdown dropdown in solutionSelectionCanvas.GetComponentsInChildren<TMP_Dropdown>())
         {
             if (dropdown.name == "PlayerDropdown") 
             {
@@ -87,7 +99,7 @@ public class SubmissionManager : MonoBehaviour
         challengeNames = challengeNames.OrderBy(c => c, StringComparer.OrdinalIgnoreCase).ToList();
         challengeNames.Insert(0, "Select Challenge");
 
-        foreach (TMP_Dropdown dropdown in GetComponentsInChildren<TMP_Dropdown>())
+        foreach (TMP_Dropdown dropdown in solutionSelectionCanvas.GetComponentsInChildren<TMP_Dropdown>())
         {
             if (dropdown.name == "ChallengeDropdown")
             {
@@ -111,7 +123,7 @@ public class SubmissionManager : MonoBehaviour
         resources.Insert(0, "Select Resource");
         players.Insert(0, "Select Player");
 
-        foreach (TMP_Dropdown dropdown in GetComponentsInChildren<TMP_Dropdown>())
+        foreach (TMP_Dropdown dropdown in solutionSelectionCanvas.GetComponentsInChildren<TMP_Dropdown>())
         {
             Debug.Log("Found Dropdown: " + dropdown.name);
             dropdown.ClearOptions(); // Example: Clear options from all dropdowns
@@ -148,34 +160,39 @@ public class SubmissionManager : MonoBehaviour
         // Handle feedback based on whether solutions are valid or empty
         if (selectedSolution1 == "Select Solution" && selectedSolution2 == "Select Solution")
         {
-            feedbackText.text = "No solution selected!";
-            feedbackText.color = Color.white;
+            //feedbackText.text = "No solution selected!";
+            //feedbackText.color = Color.white;
+            StartCoroutine(ShowFeedbackRoutine("No solution was selected!", "info"));
         }
         else if (success1 && success2)
         {
             
-            feedbackText.text = "Both solutions successfully applied!";
-            feedbackText.color = greenColor;
+            //feedbackText.text = "Both solutions successfully applied!";
+            //feedbackText.color = greenColor;
+            StartCoroutine(ShowFeedbackRoutine("Both solutions successfully applied!", "accepted"));
             ChallengeManager.Instance.ResolveChallenge(challenge1);
             ChallengeManager.Instance.ResolveChallenge(challenge2);
 
         }
         else if (success1)
         {
-            feedbackText.text = "Solution 1 applied successfully!";
-            feedbackText.color = greenColor;
+            //feedbackText.text = "Solution 1 applied successfully!";
+            //feedbackText.color = greenColor;
+            StartCoroutine(ShowFeedbackRoutine("Solution 1 applied successfully!", "accepted"));
             ChallengeManager.Instance.ResolveChallenge(challenge1);
         }
         else if (success2)
         {
-            feedbackText.text = "Solution 2 applied successfully!";
-            feedbackText.color = greenColor;
+            //feedbackText.text = "Solution 2 applied successfully!";
+            //feedbackText.color = greenColor;
+            StartCoroutine(ShowFeedbackRoutine("Solution 2 applied successfully!", "accepted"));
             ChallengeManager.Instance.ResolveChallenge(challenge2);
         }
         else
         {
-            feedbackText.text = "Missing resources or invalid solution!";
-            feedbackText.color = redColor;
+            //feedbackText.text = "Missing resources or invalid solution!";
+            //feedbackText.color = redColor;
+            StartCoroutine(ShowFeedbackRoutine("Missing resources or invalid solution!", "rejected"));
         }
 
         SpiderDiagram.Instance.UpdateSpiderDiagram(acceptedSolutions);
@@ -297,10 +314,37 @@ public class SubmissionManager : MonoBehaviour
         return true;
     }
 
+    private IEnumerator ShowFeedbackRoutine(string message, string type)
+    {
+        feedbackText.text = message;
+
+        switch (type)
+        {
+            case "accepted":
+                feedbackTitle.text = "Accepted";
+                feedbackEmoji.sprite = acceptedSprite;
+                break;
+            case "rejected":
+                feedbackTitle.text = "Rejected";
+                feedbackEmoji.sprite = rejectedSprite;
+                break;
+            case "info":
+            default:
+                feedbackTitle.text = "Note";
+                feedbackEmoji.sprite = infoSprite;
+                break;
+        }
+
+        feedbackCanvas.SetActive(true);
+
+        yield return new WaitForSeconds(popupDuration);
+
+        feedbackCanvas.SetActive(false);
+    }
 
     void ResetDropdowns()
     {
-        foreach (TMP_Dropdown dropdown in GetComponentsInChildren<TMP_Dropdown>())
+        foreach (TMP_Dropdown dropdown in solutionSelectionCanvas.GetComponentsInChildren<TMP_Dropdown>())
         {
             dropdown.value = 0;
             dropdown.RefreshShownValue();

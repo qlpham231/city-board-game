@@ -57327,6 +57327,7 @@ GameObject:
   - component: {fileID: 1165604177}
   - component: {fileID: 1165604179}
   - component: {fileID: 1165604178}
+  - component: {fileID: 1165604180}
   m_Layer: 5
   m_Name: SolutionSelectionPanel
   m_TagString: Untagged
@@ -57397,6 +57398,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1165604176}
   m_CullTransparentMesh: 1
+--- !u!114 &1165604180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1165604176}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be5ccb752478f31488f976dcdcb13f55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  solutionSelectionCanvas: {fileID: 1024969298}
+  challengeDropdown1: {fileID: 1243366242}
+  solutionDropdown1: {fileID: 2129881418}
+  contributorDropdown1: {fileID: 149996442}
+  resourceDropdown1_1: {fileID: 728488972}
+  contributorDropdown1_1: {fileID: 941410788}
+  resourceDropdown1_2: {fileID: 2130004361}
+  contributorDropdown1_2: {fileID: 173263300}
+  resourceDropdown1_3: {fileID: 85536269}
+  contributorDropdown1_3: {fileID: 1936151620}
+  resourceDropdown1_4: {fileID: 1220646158}
+  contributorDropdown1_4: {fileID: 1367946021}
+  challengeDropdown2: {fileID: 1276098942}
+  solutionDropdown2: {fileID: 1628434094}
+  contributorDropdown2: {fileID: 65536167}
+  resourceDropdown2_1: {fileID: 849055314}
+  contributorDropdown2_1: {fileID: 518666283}
+  resourceDropdown2_2: {fileID: 1997502388}
+  contributorDropdown2_2: {fileID: 1520927532}
+  resourceDropdown2_3: {fileID: 987912111}
+  contributorDropdown2_3: {fileID: 755948726}
+  resourceDropdown2_4: {fileID: 1551339821}
+  contributorDropdown2_4: {fileID: 1355161509}
+  submitButton: {fileID: 1436549894}
+  feedbackCanvas: {fileID: 1358288506}
+  feedbackEmoji: {fileID: 1618334876}
+  feedbackTitle: {fileID: 1585858127}
+  feedbackText: {fileID: 172507665}
+  infoSprite: {fileID: 21300000, guid: c3947f518544de545bd921d03f365038, type: 3}
+  acceptedSprite: {fileID: 21300000, guid: ddacc1e09e12ac448a8706d163325044, type: 3}
+  rejectedSprite: {fileID: 21300000, guid: f1ad9e5f9965f5b4185210eea12c7099, type: 3}
+  popupDuration: 5
 --- !u!1001 &1165801855
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -86300,7 +86345,7 @@ MonoBehaviour:
   openSubmissionPanelButton: {fileID: 1255620017}
   roundText: {fileID: 123363344}
   timerText: {fileID: 31281717}
-  roundDuration: 300
+  roundDuration: 10
   currentRound: 1
   implementedSolutions: []
   roleGoals: []

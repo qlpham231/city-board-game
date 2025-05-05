@@ -157,6 +157,7 @@ public class ChallengeManager : MonoBehaviour
             {
                 Debug.Log($"Penalty applied for unresolved challenge: {challenge.Name}");
                 ScoreManager.Instance.ApplyPenalty(challenge.PenaltyPoints);
+                SpiderDiagram.Instance.UpdateParameters(challenge);
                 activeChallenges.Remove(challenge);
                 challengeStartRounds.Remove(challenge);
 

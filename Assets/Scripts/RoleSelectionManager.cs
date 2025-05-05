@@ -23,6 +23,7 @@ public class RoleSelectionManager : MonoBehaviour
     {
         //roleSelectionPanel.SetActive(false);
         startGameButton.interactable = false;
+        roleSelectionCanvas.SetActive(true);
     }
 
     public void SelectRole(int roleValue)

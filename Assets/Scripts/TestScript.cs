@@ -17,7 +17,8 @@ public class TestScript : MonoBehaviour
             ChallengeType.LongTerm,
             -5,
             null,
-            Resources.Load<Sprite>("Textures/HousingShortage")));
+            Resources.Load<Sprite>("Textures/HousingShortage"),
+            new int[] { -1, -1, -1, 0, 0, -2 }));
 
         Sprite longTermSprite = challenges[Random.Range(0, challenges.Count)].ChallengeImage;
         GameObject newCard = Instantiate(challengeCardPrefab, challengeContainer);

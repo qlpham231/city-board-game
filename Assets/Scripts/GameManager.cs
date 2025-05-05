@@ -56,6 +56,11 @@ public class GameManager : MonoBehaviour
         openSubmissionPanelButton.interactable = false;
     }
 
+    //void Update()
+    //{
+    //    Shader.SetGlobalVector("_WorldSpaceCameraPos", Camera.main.transform.position);
+    //}
+
     private void InitializeData()
     {
         Solution tollTaxFreeEV = new Solution("Make Toll Tax Free on EVs", 6, 2, new List<Role> { Role.EnvAdvocate }, new Dictionary<ResourceType, int> { { ResourceType.Policy, 2 } }, new int[] { 1, 1, 0, -1, 1, 0 });
@@ -116,28 +121,32 @@ public class GameManager : MonoBehaviour
             ChallengeType.LongTerm,
             5,
             new List<Solution> { aparConstr, builRow, pubPriPart, greenBuil, subsAparCon, cityPlanHou },
-            Resources.Load<Sprite>("Textures/Challenge Card 1"));
+            Resources.Load<Sprite>("Textures/Challenge Card 1"),
+            new int[] { -1, -1, -1, 0, 0, -2 });
 
         Challenge agingInfra = new Challenge(
             "Aging Infrastructure",
             ChallengeType.LongTerm,
             5,
             new List<Solution> { smartInfraIni, fastContruCon, greenInfraRe, camSustainTra, volStreRep, interInfraEx },
-            Resources.Load<Sprite>("Textures/Challenge Card 4"));
+            Resources.Load<Sprite>("Textures/Challenge Card 4"),
+            new int[] { -2, 0, -1, -1, -1, -1 });
 
         Challenge airCrisis = new Challenge(
             "Air Quality Crisis",
             ChallengeType.Sudden,
             10,
             new List<Solution> { tollTaxFreeEV, elVehicleIncen, elVehicleRental, pubAwareAir, freePubTrans, subsEvPur, airMoniTech },
-            Resources.Load<Sprite>("Textures/Challenge Card 2"));
+            Resources.Load<Sprite>("Textures/Challenge Card 2"),
+            new int[] { -2, 0, 0, -1, -3, -2 });
 
         Challenge waterCrisis = new Challenge(
             "Water Supply Crisis",
             ChallengeType.Sudden,
             10,
             new List<Solution> { waterMoniPol, waterConserPol, smaIrrTech, urbForest, waterConserAwareCam, waterResSha, waterRecTech },
-            Resources.Load<Sprite>("Textures/Challenge Card 3"));
+            Resources.Load<Sprite>("Textures/Challenge Card 3"),
+            new int[] { 0, -2, -3, -1, 0, -2 });
 
         challenges = new List<Challenge> { houseShortage, agingInfra, airCrisis, waterCrisis };
 
@@ -311,6 +320,7 @@ public class GameManager : MonoBehaviour
 
         currentRound++;
         ChallengeManager.Instance.ApplyPenalties();
+        SpiderDiagram.Instance.UpdateSpiderDiagram();
 
         if (currentRound <= 4)
         {

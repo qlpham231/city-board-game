@@ -34,14 +34,16 @@ public class Challenge
     public int PenaltyPoints { get; }
     public List<Solution> AcceptedSolutions { get; }
     public Sprite ChallengeImage { get; }
+    public int[] PenaltyParameterChanges { get; }
 
-    public Challenge(string name, ChallengeType type, int penaltyPoints, List<Solution> solutions, Sprite image)
+    public Challenge(string name, ChallengeType type, int penaltyPoints, List<Solution> solutions, Sprite image, int[] penaltyParameterChanges)
     {
         Name = name;
         Type = type;
         PenaltyPoints = penaltyPoints;
         AcceptedSolutions = solutions;
         ChallengeImage = image;
+        PenaltyParameterChanges = penaltyParameterChanges;
     }
 }
 

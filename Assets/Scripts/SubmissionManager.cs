@@ -195,7 +195,8 @@ public class SubmissionManager : MonoBehaviour
             StartCoroutine(ShowFeedbackRoutine("Missing resources or invalid solution!", "rejected"));
         }
 
-        SpiderDiagram.Instance.UpdateSpiderDiagram(acceptedSolutions);
+        //SpiderDiagram.Instance.UpdateSpiderDiagram(acceptedSolutions);
+        SpiderDiagram.Instance.UpdateParameters(acceptedSolutions);
         GameManager.Instance.RegisterSolution();
         solutionSelectionCanvas.SetActive(false);
         ResetDropdowns();

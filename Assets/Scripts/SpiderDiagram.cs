@@ -14,7 +14,8 @@ public class SpiderDiagram : MonoBehaviour
     float[] angles = { 90f, 30f, -30f, -90f, -150f, 150f }; // Fixed angles
     Color[] colors = { Color.red, Color.magenta, Color.blue, Color.green, Color.cyan };
 
-    int[] parameters = { 4, 4, 5, 5, 4, 5 }; // Start parameter values for the city
+    int[] startParameters = { 4, 4, 5, 5, 4, 5 }; // Start parameter values for the city
+    int[] parameters = { 4, 4, 5, 5, 4, 5 }; // Parameter values for the city
 
     private void Awake()
     {
@@ -100,9 +101,22 @@ public class SpiderDiagram : MonoBehaviour
         uiLineRenderer.SetVerticesDirty(); // Force UI update
     }
 
-    public void UpdateSpiderDiagram(List<Solution> acceptedSolutions)
+    //public void UpdateSpiderDiagram(List<Solution> acceptedSolutions)
+    //{
+    //    foreach(Solution s in acceptedSolutions)
+    //    {
+    //        for (int i = 0; i < s.ParameterChanges.Length; i++)
+    //        {
+    //            parameters[i] += s.ParameterChanges[i];
+    //            parameters[i] = Mathf.Clamp(parameters[i], 0, 10);
+    //        }
+    //    }
+    //    DrawLine(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4], parameters[5]);
+    //}
+
+    public void UpdateParameters(List<Solution> acceptedSolutions)
     {
-        foreach(Solution s in acceptedSolutions)
+        foreach (Solution s in acceptedSolutions)
         {
             for (int i = 0; i < s.ParameterChanges.Length; i++)
             {
@@ -110,6 +124,21 @@ public class SpiderDiagram : MonoBehaviour
                 parameters[i] = Mathf.Clamp(parameters[i], 0, 10);
             }
         }
+    }
+
+    public void UpdateParameters(Challenge challenge)
+    {
+        for (int i = 0; i < challenge.PenaltyParameterChanges.Length; i++)
+        {
+            parameters[i] += challenge.PenaltyParameterChanges[i];
+            parameters[i] = Mathf.Clamp(parameters[i], 0, 10);
+        }
+    }
+
+    public void UpdateSpiderDiagram()
+    {
         DrawLine(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4], parameters[5]);
     }
+
+
 }

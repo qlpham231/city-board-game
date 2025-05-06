@@ -15,7 +15,7 @@ public class SpiderDiagram : MonoBehaviour
     Color[] colors = { Color.red, Color.magenta, Color.blue, Color.green, Color.cyan };
 
     int[] startParameters = { 4, 4, 5, 5, 4, 5 }; // Start parameter values for the city
-    int[] parameters = { 4, 4, 5, 5, 4, 5 }; // Parameter values for the city
+    public int[] parameters = { 4, 4, 5, 5, 4, 5 }; // Parameter values for the city
 
     private void Awake()
     {

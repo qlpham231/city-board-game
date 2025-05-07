@@ -9,7 +9,7 @@ public class ScoreManager : MonoBehaviour
     public static ScoreManager Instance { get; private set; }
     public TextMeshProUGUI cityTransformationPointsText;
     public int CityTransformationScore { get; private set; } = 0;
-    public Dictionary<Player, int> PlayerScores { get; private set; } = new Dictionary<Player, int>();
+    public Dictionary<Player, float> PlayerScores { get; private set; } = new Dictionary<Player, float>();
 
     public GameObject gameSummaryPanel;
     public TextMeshProUGUI finalCityScoreText;
@@ -40,12 +40,15 @@ public class ScoreManager : MonoBehaviour
         Debug.Log("Calculating score...");
 
         // Step 1: Allocate solution contribution points
-        int solutionPoints = (int)Math.Ceiling(solution.Points * 0.4); // 40% to solution provider
+        //int solutionPoints = (int)Math.Ceiling(solution.Points * 0.4); // 40% to solution provider
+        float solutionPoints = solution.Points * 0.4f;
         AddPointsToPlayer(solutionProvider, solutionPoints);
 
         // Step 2: Distribute resource contribution points
-        int remainingPoints = (int)Math.Ceiling(solution.Points * 0.6); // 60% split among resource providers
-        int pointsPerResource = resources.Count > 0 ? remainingPoints / resources.Count : 0;
+        //int remainingPoints = (int)Math.Ceiling(solution.Points * 0.6); // 60% split among resource providers
+        //int pointsPerResource = resources.Count > 0 ? remainingPoints / resources.Count : 0;
+        float remainingPoints = solution.Points * 0.6f; // Keep as float
+        float pointsPerResource = resources.Count > 0 ? remainingPoints / resources.Count : 0f;
 
         foreach (var kvp in resources)
         {
@@ -109,7 +112,7 @@ public class ScoreManager : MonoBehaviour
         cityTransformationPointsText.text = "City transformation points: " + CityTransformationScore.ToString();
     }
 
-    private void AddPointsToPlayer(Player player, int points)
+    private void AddPointsToPlayer(Player player, float points)
     {
         if (!PlayerScores.ContainsKey(player))
         {
@@ -117,6 +120,11 @@ public class ScoreManager : MonoBehaviour
         }
         PlayerScores[player] += points;
         PlayerScores[player] = Math.Max(0, PlayerScores[player]);
+        Debug.Log("Player " + player.PlayerNr + " " + PlayerScores[player]);
+        //foreach (KeyValuePair<Player, float> entry in PlayerScores)
+        //{
+        //    Debug.Log($"Player: {entry.Key.PlayerNr}, Score: {entry.Value}");
+        //}
     }
 
     public int CalculateRoleScore(Player player)
@@ -219,10 +227,10 @@ public class ScoreManager : MonoBehaviour
         CityTransformationScore -= penaltyPoints;
         if (CityTransformationScore < 0) CityTransformationScore = 0;
 
-        int penaltyPerPlayer = GameManager.Instance.playerList.Count > 0 ? Mathf.CeilToInt((float)penaltyPoints / GameManager.Instance.playerList.Count) : 0;
+        float penaltyPerPlayer = GameManager.Instance.playerList.Count > 0 ? (float)penaltyPoints / GameManager.Instance.playerList.Count : 0;
         GameManager.Instance.playerList.ForEach(player => AddPointsToPlayer(player, -penaltyPerPlayer));
 
-        cityTransformationPointsText.text = "City transformation points: " + CityTransformationScore;
+        cityTransformationPointsText.text = "City transformation score: " + CityTransformationScore;
     }
 
     public void ApplyFinalRoleScore()
@@ -240,7 +248,7 @@ public class ScoreManager : MonoBehaviour
         SpiderDiagram.Instance.spiderDiagramCanvas.sortingOrder = 6;
 
         // Show final city score
-        finalCityScoreText.text = "City Transformation Score: " + CityTransformationScore;
+        finalCityScoreText.text = "City transformation score: " + CityTransformationScore;
 
         // Sort players by score descending
         var rankedPlayers = PlayerScores.OrderByDescending(pair => pair.Value).ToList();
@@ -252,8 +260,9 @@ public class ScoreManager : MonoBehaviour
             TextMeshProUGUI[] texts = row.GetComponentsInChildren<TextMeshProUGUI>();
 
             texts[0].text = $"#{rank}";
-            texts[1].text = $"Player {pair.Key.PlayerNr}: " + pair.Key.Role.GetDescription(); // or use a DescriptionAttribute helper
-            texts[2].text = pair.Value.ToString() + " TPs";
+            texts[1].text = $"Player {pair.Key.PlayerNr}: " + pair.Key.Role.GetDescription(); 
+            //texts[2].text = pair.Value.ToString() + " TPs";
+            texts[2].text = Mathf.CeilToInt(pair.Value).ToString() + " TPs";
 
             rank++;
         }

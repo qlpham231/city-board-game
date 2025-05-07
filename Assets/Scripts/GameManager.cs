@@ -178,7 +178,7 @@ public class GameManager : MonoBehaviour
             ChallengeReactionLevel.Failure,
             "Infrastructure breakdowns lead to increased accidents and power outages. Public safety is compromised.",
             Resources.Load<Sprite>("Textures/AgingInfraFailure"),
-            Resources.Load<AudioClip>("Audio/distant-ambulance-siren")));
+            Resources.Load<AudioClip>("Audio/distant-ambulance-siren-long")));
 
 
         allReactions.Add(new CityReaction(
@@ -208,7 +208,7 @@ public class GameManager : MonoBehaviour
             ChallengeReactionLevel.Failure,
             "The city enters emergency water rationing. Public anger grows as daily life is disrupted.",
             Resources.Load<Sprite>("Textures/WaterCrisisFailure"),
-            Resources.Load<AudioClip>("Audio/bushes-medium-heavy-wind-in-dry-vegetation")));
+            Resources.Load<AudioClip>("Audio/crowd-worried")));
     }
 
     public void SetPlayers(List<Player> players)
@@ -321,6 +321,7 @@ public class GameManager : MonoBehaviour
         currentRound++;
         ChallengeManager.Instance.ApplyPenalties();
         SpiderDiagram.Instance.UpdateSpiderDiagram();
+        CityReactionManager.Instance.ShowCityReaction();
 
         if (currentRound <= 4)
         {
@@ -330,6 +331,8 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Game Over! Final scores calculated.");
             ScoreManager.Instance.ApplyFinalRoleScore();
+            yield return new WaitForSeconds(5f);
+
             ScoreManager.Instance.ShowPostGameSummary();
         }
     }

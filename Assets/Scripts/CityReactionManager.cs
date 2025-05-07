@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 
 public class CityReactionManager : MonoBehaviour
@@ -13,8 +14,12 @@ public class CityReactionManager : MonoBehaviour
     //public GameObject reactionPopup;
     public TextMeshProUGUI narrativeTextUI;
     public GameObject reactionImage;
-    public AudioSource audioSource;
     public GameObject narrativePanel;
+
+    [Header("Audio")]
+    public AudioSource reactionAudioSource;
+    public AudioSource ambientAudioSource;
+    public AudioClip ambientCityLoop;
 
     [Header("Transport")]
     public Material roadMaterial;
@@ -64,6 +69,12 @@ public class CityReactionManager : MonoBehaviour
                 p.Stop();
         }
 
+        if (ambientAudioSource != null && ambientCityLoop != null)
+        {
+            ambientAudioSource.clip = ambientCityLoop;
+            ambientAudioSource.Play();
+        }
+
         ShowCityReaction();
     }
 
@@ -90,11 +101,20 @@ public class CityReactionManager : MonoBehaviour
 
         if (reaction.ReactionSound)
         {
-            audioSource.PlayOneShot(reaction.ReactionSound);
+            //bool playTwice = false;
+            //if ((reaction.Challenge.Name == "Housing Shortage" || reaction.Challenge.Name == "Water Supply Crisis") && reaction.ReactionLevel == ChallengeReactionLevel.Failure)
+
+            if (reaction.ReactionSound.name != "distant-ambulance-siren-long")
+            {
+                StartCoroutine(PlayReactionSoundTwice(reaction.ReactionSound));
+            }
+            else
+            {
+                reactionAudioSource.PlayOneShot(reaction.ReactionSound);
+            }
         }
 
-        reactionImage.SetActive(true);
-        ShowCityReaction();
+        //reactionImage.SetActive(true);
     }
 
     public void ShowCityReaction()
@@ -106,7 +126,7 @@ public class CityReactionManager : MonoBehaviour
 
         // Road material transition
         Color targetRoadColor = Color.Lerp(badRoadColor, goodRoadColor, transport / 10f);
-        roadMaterial.color = Color.Lerp(roadMaterial.color, targetRoadColor, Time.deltaTime * colorChangeSpeed);
+        StartCoroutine(SmoothColor(roadMaterial, "_Color", roadMaterial.color, targetRoadColor, colorChangeSpeed));
 
         // Toggle cars
         //for (int i = 0; i < cars.Length; i++)
@@ -121,8 +141,8 @@ public class CityReactionManager : MonoBehaviour
         // Ecological
         int ecological = SpiderDiagram.Instance.parameters[1];
         // Grass color
-        Color targetGrassColor = Color.Lerp(badGrassColor, goodGrassColor, ecological / 10f);
-        grassMaterial.color = Color.Lerp(grassMaterial.color, targetGrassColor, Time.deltaTime * colorChangeSpeed);
+        //Color targetGrassColor = Color.Lerp(badGrassColor, goodGrassColor, ecological / 10f);
+        //StartCoroutine(SmoothColor(grassMaterial, "_Color", grassMaterial.color, targetGrassColor, colorChangeSpeed));
 
         // Tree density (e.g., enabling/disabling tree prefabs)
         int activeTrees = Mathf.RoundToInt(treeObjects.Length * (ecological / 10f));
@@ -133,13 +153,16 @@ public class CityReactionManager : MonoBehaviour
 
         // Water resources
         int water = SpiderDiagram.Instance.parameters[2];
+
         // Grass color
-        targetGrassColor = Color.Lerp(badGrassColor, goodGrassColor, water / 10f);
-        grassMaterial.color = Color.Lerp(grassMaterial.color, targetGrassColor, Time.deltaTime * colorChangeSpeed);
+        int grassHealth = Mathf.Min(ecological, water); // Use the worse one
+        Color targetGrassColor = Color.Lerp(badGrassColor, goodGrassColor, grassHealth / 10f);
+        StartCoroutine(SmoothColor(grassMaterial, "_Color", grassMaterial.color, targetGrassColor, colorChangeSpeed));
 
         // Sky color
-        Color targetSkyColor = Color.Lerp(drySkyColor, goodSkyColor, water / 10f);
-        skySpriteRenderer.color = Color.Lerp(skySpriteRenderer.color, targetSkyColor, Time.deltaTime * colorChangeSpeed);
+        //Color targetSkyColor = Color.Lerp(drySkyColor, goodSkyColor, water / 10f);
+        ////skySpriteRenderer.color = Color.Lerp(skySpriteRenderer.color, targetSkyColor, Time.deltaTime * colorChangeSpeed);
+        //StartCoroutine(SmoothSpriteColor(skySpriteRenderer, skySpriteRenderer.color, targetSkyColor, colorChangeSpeed));
 
         // Water signs/fountains
         //EnableAmount(waterSigns, Mathf.RoundToInt(maxSigns * (1 - water / 10f)));
@@ -165,10 +188,23 @@ public class CityReactionManager : MonoBehaviour
                     p.Stop();
             }
         }
-         
+
         // Sky color
-        targetSkyColor = Color.Lerp(pollutedSkyColor, goodSkyColor, airQuality / 10f);
-        skySpriteRenderer.color = Color.Lerp(skySpriteRenderer.color, targetSkyColor, Time.deltaTime * colorChangeSpeed);
+        float midPoint = 5f;
+
+        // Calculate absolute distances from center (the more extreme value wins)
+        float waterDeviation = Mathf.Abs(water - midPoint);
+        float airDeviation = Mathf.Abs(airQuality - midPoint);
+
+        bool waterIsMoreExtreme = waterDeviation > airDeviation;
+
+        // Pick the "bad" color based on the more extreme parameter
+        Color badColor = waterIsMoreExtreme ? drySkyColor : pollutedSkyColor;
+        int drivingValue = waterIsMoreExtreme ? water : airQuality;
+
+        Debug.Log("air: " + airQuality);
+        Color targetSkyColor = Color.Lerp(badColor, goodSkyColor, drivingValue / 10f);
+        StartCoroutine(SmoothSpriteColor(skySpriteRenderer, skySpriteRenderer.color, targetSkyColor, colorChangeSpeed));
 
         // Fog
         UpdateFogSmooth(airQuality);
@@ -192,6 +228,13 @@ public class CityReactionManager : MonoBehaviour
 
     }
 
+    private IEnumerator PlayReactionSoundTwice(AudioClip clip)
+    {
+        reactionAudioSource.PlayOneShot(clip);
+        yield return new WaitForSeconds(clip.length + 0.1f);
+        reactionAudioSource.PlayOneShot(clip);
+    }
+
 
     private void EnableAmount(GameObject[] objects, int amountToEnable)
     {
@@ -199,6 +242,30 @@ public class CityReactionManager : MonoBehaviour
         {
             objects[i].SetActive(i < amountToEnable);
         }
+    }
+
+    private IEnumerator SmoothColor(Material mat, string colorProperty, Color start, Color end, float speed)
+    {
+        float t = 0f;
+        while (t < 1f)
+        {
+            t += Time.deltaTime * speed;
+            mat.SetColor(colorProperty, Color.Lerp(start, end, t));
+            yield return null;
+        }
+        mat.SetColor(colorProperty, end); // Ensure final color is exact
+    }
+
+    private IEnumerator SmoothSpriteColor(SpriteRenderer sprite, Color start, Color end, float speed)
+    {
+        float t = 0f;
+        while (t < 1f)
+        {
+            t += Time.deltaTime * speed;
+            sprite.color = Color.Lerp(start, end, t);
+            yield return null;
+        }
+        sprite.color = end;
     }
 
     float currentIntensity;

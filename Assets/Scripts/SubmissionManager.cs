@@ -255,6 +255,7 @@ public class SubmissionManager : MonoBehaviour
         ScoreManager.Instance.CalculateScores(selectedPlayer, selectedSolution, selectedResources);
         //ChallengeManager.Instance.ResolveChallenge(selectedChallenge);
         CityReactionManager.Instance.PlayReaction(selectedChallenge, ChallengeReactionLevel.Success);
+        CityReactionManager.Instance.UpdateEventBillboardMessage(selectedChallenge);
         return true;
     }
 

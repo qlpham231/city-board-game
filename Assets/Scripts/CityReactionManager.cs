@@ -1,6 +1,8 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEditor.Experimental.GraphView.GraphView;
@@ -20,6 +22,11 @@ public class CityReactionManager : MonoBehaviour
     public AudioSource reactionAudioSource;
     public AudioSource ambientAudioSource;
     public AudioClip ambientCityLoop;
+
+    [Header("Billboards")]
+    [SerializeField] private TextMeshProUGUI statusBillboard;
+    [SerializeField] private TextMeshProUGUI humorBillboard;
+    [SerializeField] private TextMeshProUGUI eventBillboard;
 
     [Header("Transport")]
     public Material roadMaterial;
@@ -90,6 +97,7 @@ public class CityReactionManager : MonoBehaviour
         }
 
         ShowReaction(reaction);
+        //UpdateEventBillboardMessage(challenge);
     }
 
     private void ShowReaction(CityReaction reaction)
@@ -120,6 +128,10 @@ public class CityReactionManager : MonoBehaviour
     public void ShowCityReaction()
     {
         int[] parameters = SpiderDiagram.Instance.parameters;
+
+        // Update billboards
+        UpdateStatusBillboard(parameters);
+        UpdateHumorBillboard(parameters);
 
         // Transport
         int transport = SpiderDiagram.Instance.parameters[0];
@@ -177,7 +189,7 @@ public class CityReactionManager : MonoBehaviour
         // Smoke
         foreach (ParticleSystem p in smokeParticleSystems)
         {
-            if (airQuality < 4 || energy < 4)
+            if (airQuality < 4)
             {
                 if (!p.isPlaying)
                     p.Play();
@@ -274,9 +286,6 @@ public class CityReactionManager : MonoBehaviour
         float targetIntensity = MapThreshold(airQuality, 4f, inverse: true);
         float clampedFogIntensity = Mathf.Lerp(0f, 0.55f, targetIntensity);
         StartCoroutine(SmoothFogTransition(clampedFogIntensity));
-
-        //currentIntensity = Mathf.Lerp(currentIntensity, clampedFogIntensity, Time.deltaTime * 2f); // Smooth fade
-        //fogMaterial.SetFloat("_FogIntensity", currentIntensity);
     }
 
     private IEnumerator SmoothFogTransition(float targetIntensity)
@@ -316,4 +325,129 @@ public class CityReactionManager : MonoBehaviour
             return value > threshold ? Mathf.Clamp01((value - threshold) / (10f - threshold)) : 0f;
         }
     }
+
+    void UpdateStatusBillboard(int[] parameters)
+    {
+        string[] categories = { "Transport", "Ecology", "Water Resource", "Energy", "Air Quality", "Economy" };
+
+        //int maxDeviation = 0;
+        //int extremeIndex = 0;
+
+        //for (int i = 0; i < parameters.Length; i++)
+        //{
+        //    int deviation = Mathf.Abs(parameters[i] - 5); // Midpoint
+        //    if (deviation > maxDeviation)
+        //    {
+        //        maxDeviation = deviation;
+        //        extremeIndex = i;
+        //    }
+        //}
+
+        //int value = parameters[extremeIndex];
+        //string category = categories[extremeIndex];
+
+
+        // First, find the max deviation value
+        int maxDeviation = parameters
+            .Select(p => Mathf.Abs(p - 5))
+            .Max();
+
+        // Collect all indices that match the max deviation
+        List<int> extremeIndices = new List<int>();
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            if (Mathf.Abs(parameters[i] - 5) == maxDeviation)
+            {
+                extremeIndices.Add(i);
+            }
+        }
+
+        // Randomly choose one of the equally extreme indices
+        int chosenIndex = extremeIndices[Random.Range(0, extremeIndices.Count)];
+        int value = parameters[chosenIndex];
+        string category = categories[chosenIndex];
+
+        if (value <= 3)
+        {
+            string[] badPhrases = {
+            $"{category} Crisis!",
+            $"{category} Falling Fast",
+            $"Fix {category} Now!",
+            $"Low {category} Alert",
+            $"City {category} Struggles"
+            };
+            statusBillboard.text = badPhrases[Random.Range(0, badPhrases.Length)];
+        }
+        else if (value >= 7)
+        {
+            string[] goodPhrases = {
+            $"{category} Looking Great!",
+            $"{category} Is Thriving!",
+            $"{category} Success!",
+            $"{category} Wins Big",
+            $"Top Marks in {category}"
+            };
+            statusBillboard.text = goodPhrases[Random.Range(0, goodPhrases.Length)];
+        }
+        else
+        {
+            string[] neutralPhrases = {
+            $"{category} Holding Steady",
+            $"{category} Looks Fine",
+            $"{category} Okay For Now",
+            $"Mild {category} Status",
+            $"Stable {category} Levels"
+            };
+            statusBillboard.text = neutralPhrases[Random.Range(0, neutralPhrases.Length)];
+        }
+    }
+
+    private void UpdateHumorBillboard(int[] parameters)
+    {
+        if (parameters.All(p => p >= 4 && p <= 6))
+        {
+            string[] jokes = {
+            "Smog? That's just city seasoning.",
+            "Our pigeons have jobs now!",
+            "Still no flying cars... yet.",
+            "Your taxes built this billboard.",
+            "Free Wi-Fi: Just kidding."
+            };
+
+            humorBillboard.text = jokes[Random.Range(0, jokes.Length)];
+        }
+        else
+        {
+            string[] messages = {
+            "Every Decision Matters",
+            "Small Choices, Big Impact",
+            "Invest in the Future, Now.",
+            "The Future Is in Your Hands.",
+            "Don’t Let Your City Go Dark."
+            };
+            humorBillboard.text = messages[Random.Range(0, messages.Length)];
+        }
+    }
+
+    public void UpdateEventBillboardMessage(Challenge challenge)
+    {
+        if (challenge.Name == "Housing Shortage")
+        {
+            eventBillboard.text = "Housing crisis averted!";
+        } 
+        else if (challenge.Name == "Aging Infrastructure")
+        {
+            eventBillboard.text = "🔧 City upgrades underway!";
+        }
+        else if (challenge.Name == "Air Quality Crisis")
+        {
+            eventBillboard.text = "Masks off, breath easy.";
+        }
+        else if (challenge.Name == "Water Supply Crisis")
+        {
+            eventBillboard.text = "💧 Water flows again!";
+        }
+            
+    }
+
 }

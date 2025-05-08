@@ -12,7 +12,8 @@ public class SpiderDiagram : MonoBehaviour
     Vector2[] points;
 
     float[] angles = { 90f, 30f, -30f, -90f, -150f, 150f }; // Fixed angles
-    Color[] colors = { Color.red, Color.magenta, Color.blue, Color.green, Color.cyan };
+    //Color[] colors = { Color.red, Color.magenta, Color.blue, Color.green, Color.cyan };
+    public Color[] colors;
 
     int[] startParameters = { 4, 4, 5, 5, 4, 5 }; // Start parameter values for the city
     public int[] parameters = { 4, 4, 5, 5, 4, 5 }; // Parameter values for the city
@@ -82,7 +83,7 @@ public class SpiderDiagram : MonoBehaviour
         UILineRenderer uiLineRenderer = newLine.GetComponent<UILineRenderer>();
 
         // Assign color according to round
-        Color roundColor = colors[GameManager.Instance.currentRound - 1];
+        Color roundColor = colors[GameManager.Instance.currentRound - 2];
         uiLineRenderer.color = roundColor;
 
         points = new Vector2[angles.Length + 1];

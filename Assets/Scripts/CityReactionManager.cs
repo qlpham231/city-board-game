@@ -57,6 +57,7 @@ public class CityReactionManager : MonoBehaviour
     [Header("Economy")]
     public GameObject[] tents;
     public GameObject[] highRises;
+    private Dictionary<GameObject, Vector3> highRiseTargetPositions = new Dictionary<GameObject, Vector3>();
 
     private void Awake()
     {
@@ -80,6 +81,11 @@ public class CityReactionManager : MonoBehaviour
         {
             ambientAudioSource.clip = ambientCityLoop;
             ambientAudioSource.Play();
+        }
+
+        foreach (GameObject highRise in highRises)
+        {
+            highRiseTargetPositions[highRise] = highRise.transform.position;
         }
 
         ShowCityReaction();
@@ -226,15 +232,39 @@ public class CityReactionManager : MonoBehaviour
 
 
         // Economy
-        int economy = SpiderDiagram.Instance.parameters[4];
+        int economy = SpiderDiagram.Instance.parameters[5];
 
         // Tents
         float visibilityPercentage = MapThreshold(economy, 4f, inverse: true);
         EnableAmount(tents, Mathf.RoundToInt(tents.Length * visibilityPercentage));
         
         // Highrise buildings
+        Debug.Log("economy " +  economy);
         visibilityPercentage = MapThreshold(economy, 6f);
-        EnableAmount(highRises, Mathf.RoundToInt(highRises.Length * visibilityPercentage));
+        Debug.Log("visibility "+visibilityPercentage);
+        //EnableAmount(highRises, Mathf.RoundToInt(highRises.Length * visibilityPercentage));
+        int amountToEnable = Mathf.RoundToInt(highRises.Length * visibilityPercentage);
+        Debug.Log("amount to enable  " + amountToEnable);
+
+        for (int i = 0; i < highRises.Length; i++)
+        {
+            GameObject building = highRises[i];
+            bool shouldBeActive = i < amountToEnable;
+
+            if (shouldBeActive && !building.activeSelf)
+            {
+                building.SetActive(true);
+
+                if (highRiseTargetPositions.TryGetValue(building, out Vector3 targetPos))
+                {
+                    StartCoroutine(RaiseBuildingToTarget(building, targetPos));
+                }
+            }
+            else if (!shouldBeActive && building.activeSelf)
+            {
+                building.SetActive(false);
+            }
+        }
 
         //EnableAmount(pedestrians, Mathf.RoundToInt(maxPeople * (economy / 10f)));
 
@@ -312,6 +342,23 @@ public class CityReactionManager : MonoBehaviour
             if (rotatorScript != null)
                 rotatorScript.enabled = (i < activeCount);
         }
+    }
+
+    private IEnumerator RaiseBuildingToTarget(GameObject building, Vector3 targetPosition, float startOffset = -15f, float duration = 4f)
+    {
+        Vector3 startPos = new Vector3(targetPosition.x, targetPosition.y + startOffset, targetPosition.z);
+        building.transform.position = startPos;
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, elapsed / duration);
+            building.transform.position = Vector3.Lerp(startPos, targetPosition, t);
+            yield return null;
+        }
+
+        building.transform.position = targetPosition; // Snap to final
     }
 
     private float MapThreshold(float value, float threshold, bool inverse = false)

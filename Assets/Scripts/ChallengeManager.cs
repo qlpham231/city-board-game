@@ -14,6 +14,7 @@ public class ChallengeManager : MonoBehaviour
     private List<Challenge> activeChallenges = new();
     private Dictionary<Challenge, int> challengeStartRounds = new(); // Maps challenge to start round
     private Dictionary<Challenge, GameObject> challengeCards = new(); // Maps challenge to its UI card
+    private List<Challenge> fixedChallenges = new();
 
     private int consecutiveCrises = 0;
     private float crisisChance = 0.2f; // Starts at 20% and increases
@@ -36,6 +37,11 @@ public class ChallengeManager : MonoBehaviour
         availableSuddenCrises = GameManager.Instance.challenges
             .Where(c => c.Type == ChallengeType.Sudden)
             .ToList();
+        fixedChallenges = new List<Challenge> { GameManager.Instance.GetChallengeByName("Housing Shortage"),
+            GameManager.Instance.GetChallengeByName("Air Quality Crisis"),
+            GameManager.Instance.GetChallengeByName("Aging Infrastructure"),
+            GameManager.Instance.GetChallengeByName("Water Supply Crisis")
+        };
     }
 
     // Start a new challenge round (called by GameManager)
@@ -47,27 +53,34 @@ public class ChallengeManager : MonoBehaviour
 
     private void DisplayChallengeCard()
     {
-        // Draws a long-term challenge in Round 1 and Round 3
-        if (GameManager.Instance.currentRound == 1 || GameManager.Instance.currentRound == 3)
-        {
-            Challenge selectedChallenge = DrawUniqueChallenge(ref availableLongTermChallenges);
-            activeChallenges.Add(selectedChallenge);
-            challengeStartRounds[selectedChallenge] = GameManager.Instance.currentRound;
-            onCurrentChallengesUpdated.Invoke(activeChallenges);
-            DisplayChallenge(selectedChallenge);
+        //// Draws a long-term challenge in Round 1 and Round 3
+        //if (GameManager.Instance.currentRound == 1 || GameManager.Instance.currentRound == 3)
+        //{
+        //    Challenge selectedChallenge = DrawUniqueChallenge(ref availableLongTermChallenges);
+        //    activeChallenges.Add(selectedChallenge);
+        //    challengeStartRounds[selectedChallenge] = GameManager.Instance.currentRound;
+        //    onCurrentChallengesUpdated.Invoke(activeChallenges);
+        //    DisplayChallenge(selectedChallenge);
 
-        }
+        //}
 
-        // Draws a short-term challenge in Round 2 and Round 4
-        if (GameManager.Instance.currentRound == 2 || GameManager.Instance.currentRound == 4)
-        {
-            Challenge selectedCrisis = DrawUniqueChallenge(ref availableSuddenCrises);
-            activeChallenges.Add(selectedCrisis);
-            challengeStartRounds[selectedCrisis] = GameManager.Instance.currentRound;
-            onCurrentChallengesUpdated.Invoke(activeChallenges);
-            DisplayChallenge(selectedCrisis);
+        //// Draws a short-term challenge in Round 2 and Round 4
+        //if (GameManager.Instance.currentRound == 2 || GameManager.Instance.currentRound == 4)
+        //{
+        //    Challenge selectedCrisis = DrawUniqueChallenge(ref availableSuddenCrises);
+        //    activeChallenges.Add(selectedCrisis);
+        //    challengeStartRounds[selectedCrisis] = GameManager.Instance.currentRound;
+        //    onCurrentChallengesUpdated.Invoke(activeChallenges);
+        //    DisplayChallenge(selectedCrisis);
 
-        }
+        //}
+
+        Challenge challenge = fixedChallenges[GameManager.Instance.currentRound-1];
+        activeChallenges.Add(challenge);
+        challengeStartRounds[challenge] = GameManager.Instance.currentRound;
+        onCurrentChallengesUpdated.Invoke(activeChallenges);
+        DisplayChallenge(challenge);
+
 
         //if (GameManager.Instance.currentRound > 1 && Random.value < crisisChance && consecutiveCrises < 2)
         //{

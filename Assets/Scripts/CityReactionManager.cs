@@ -394,7 +394,7 @@ public class CityReactionManager : MonoBehaviour
         //string category = categories[extremeIndex];
 
 
-        // First, find the max deviation value
+        // First find the max deviation value
         int maxDeviation = parameters
             .Select(p => Mathf.Abs(p - 5))
             .Max();

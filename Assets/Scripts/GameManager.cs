@@ -56,10 +56,6 @@ public class GameManager : MonoBehaviour
         openSubmissionPanelButton.interactable = false;
     }
 
-    //void Update()
-    //{
-    //    Shader.SetGlobalVector("_WorldSpaceCameraPos", Camera.main.transform.position);
-    //}
 
     private void InitializeData()
     {
@@ -279,12 +275,6 @@ public class GameManager : MonoBehaviour
                     PulseEffect.Instance.TriggerPulse();
                 }
             }
-
-            //if (!endAlertPlayed && timeRemaining <= 1f)
-            //{
-            //    endAlertPlayed = true;
-            //    PulseEffect.Instance.PlayEndAlert();
-            //}
 
             yield return null;
         }

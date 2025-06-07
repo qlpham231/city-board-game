@@ -102,19 +102,6 @@ public class SpiderDiagram : MonoBehaviour
         uiLineRenderer.SetVerticesDirty(); // Force UI update
     }
 
-    //public void UpdateSpiderDiagram(List<Solution> acceptedSolutions)
-    //{
-    //    foreach(Solution s in acceptedSolutions)
-    //    {
-    //        for (int i = 0; i < s.ParameterChanges.Length; i++)
-    //        {
-    //            parameters[i] += s.ParameterChanges[i];
-    //            parameters[i] = Mathf.Clamp(parameters[i], 0, 10);
-    //        }
-    //    }
-    //    DrawLine(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4], parameters[5]);
-    //}
-
     public void UpdateParameters(List<Solution> acceptedSolutions)
     {
         foreach (Solution s in acceptedSolutions)

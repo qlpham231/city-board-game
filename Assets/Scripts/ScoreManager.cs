@@ -39,14 +39,11 @@ public class ScoreManager : MonoBehaviour
     {
         Debug.Log("Calculating score...");
 
-        // Step 1: Allocate solution contribution points
-        //int solutionPoints = (int)Math.Ceiling(solution.Points * 0.4); // 40% to solution provider
+        // Allocate solution contribution points
         float solutionPoints = solution.Points * 0.4f;
         AddPointsToPlayer(solutionProvider, solutionPoints);
 
-        // Step 2: Distribute resource contribution points
-        //int remainingPoints = (int)Math.Ceiling(solution.Points * 0.6); // 60% split among resource providers
-        //int pointsPerResource = resources.Count > 0 ? remainingPoints / resources.Count : 0;
+        // Distribute resource contribution points
         float remainingPoints = solution.Points * 0.6f; // Keep as float
         float pointsPerResource = resources.Count > 0 ? remainingPoints / resources.Count : 0f;
 
@@ -55,7 +52,7 @@ public class ScoreManager : MonoBehaviour
             AddPointsToPlayer(kvp.Key, pointsPerResource);
         }
 
-        // Step 3: Calculate collaboration bonuses
+        // Calculate collaboration bonuses
         int collabBonus = 0;
         if (solution.CollabRoles != null && solution.CollabRoles.Any())
         {
@@ -107,7 +104,7 @@ public class ScoreManager : MonoBehaviour
             }
         }
 
-        // Step 4: Update City Transformation Score
+        // Update City Transformation Score
         CityTransformationScore += solution.Points + collabBonus;
         cityTransformationPointsText.text = "City transformation points: " + CityTransformationScore.ToString();
     }
@@ -121,10 +118,6 @@ public class ScoreManager : MonoBehaviour
         PlayerScores[player] += points;
         PlayerScores[player] = Math.Max(0, PlayerScores[player]);
         Debug.Log("Player " + player.PlayerNr + " " + PlayerScores[player]);
-        //foreach (KeyValuePair<Player, float> entry in PlayerScores)
-        //{
-        //    Debug.Log($"Player: {entry.Key.PlayerNr}, Score: {entry.Value}");
-        //}
     }
 
     public int CalculateRoleScore(Player player)

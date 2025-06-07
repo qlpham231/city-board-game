@@ -160,15 +160,10 @@ public class SubmissionManager : MonoBehaviour
         // Handle feedback based on whether solutions are valid or empty
         if (selectedSolution1 == "Select Solution" && selectedSolution2 == "Select Solution")
         {
-            //feedbackText.text = "No solution selected!";
-            //feedbackText.color = Color.white;
             StartCoroutine(ShowFeedbackRoutine("No solution was selected!", "info"));
         }
         else if (success1 && success2)
         {
-            
-            //feedbackText.text = "Both solutions successfully applied!";
-            //feedbackText.color = greenColor;
             StartCoroutine(ShowFeedbackRoutine("Both solutions successfully applied!", "accepted"));
             ChallengeManager.Instance.ResolveChallenge(challenge1);
             ChallengeManager.Instance.ResolveChallenge(challenge2);
@@ -176,22 +171,16 @@ public class SubmissionManager : MonoBehaviour
         }
         else if (success1)
         {
-            //feedbackText.text = "Solution 1 applied successfully!";
-            //feedbackText.color = greenColor;
             StartCoroutine(ShowFeedbackRoutine("Solution 1 applied successfully!", "accepted"));
             ChallengeManager.Instance.ResolveChallenge(challenge1);
         }
         else if (success2)
         {
-            //feedbackText.text = "Solution 2 applied successfully!";
-            //feedbackText.color = greenColor;
             StartCoroutine(ShowFeedbackRoutine("Solution 2 applied successfully!", "accepted"));
             ChallengeManager.Instance.ResolveChallenge(challenge2);
         }
         else
         {
-            //feedbackText.text = "Missing resources or invalid solution!";
-            //feedbackText.color = redColor;
             StartCoroutine(ShowFeedbackRoutine("Missing resources or invalid solution!", "rejected"));
         }
 
@@ -224,14 +213,14 @@ public class SubmissionManager : MonoBehaviour
             return false; // Stop if something is missing
         }
 
-        // ✅ Step 1: Check if solution is accepted for the challenge
+        // Check if solution is accepted for the challenge
         if (!selectedChallenge.AcceptedSolutions.Contains(selectedSolution))
         {
             Debug.Log("Solution is not valid for this challenge.");
             return false;
         }
 
-        // ✅ Step 2: Collect selected resources (allowing up to 4, but some can be empty)
+        // Collect selected resources (allowing up to 4, but some can be empty)
         //List<Resource> selectedResources = new List<Resource>();
         //Dictionary<Player, Resource> selectedResources = new Dictionary<Player, Resource>();
         List<KeyValuePair<Player, Resource>> selectedResources = new List<KeyValuePair<Player, Resource>>();
@@ -240,14 +229,14 @@ public class SubmissionManager : MonoBehaviour
         AssignResource(selectedResources, resourceDropdown3, contributorDropdown3);
         AssignResource(selectedResources, resourceDropdown4, contributorDropdown4);
 
-        // ✅ Step 3: Validate if selected resources fulfill the required resources
+        // Validate if selected resources fulfill the required resources
         if (!ValidateResources(selectedSolution, selectedResources))
         {
             Debug.Log("Resources do not meet the requirements.");
             return false;
         }
 
-        // ✅ Step 4: Register the solution and update game state
+        // Register the solution and update game state
         // selectedPlayer.SubmitSolution(selectedSolution);
         selectedSolution.Owner = selectedPlayer;
         acceptedSolutions.Add(selectedSolution);
@@ -287,7 +276,7 @@ public class SubmissionManager : MonoBehaviour
             Resource resource = kvp.Value;
             //if (resource.ApplicableSolutions != null)
             //{
-                // ✅ Check if resource has additional conditions (allowed solutions)
+                // Check if resource has additional conditions (allowed solutions)
                 if (resource.ApplicableSolutions != null && !resource.ApplicableSolutions.Contains(solution))
                 {
                     Debug.Log($"Resource {resource.Name} cannot be used for {solution.Name}.");
@@ -295,14 +284,14 @@ public class SubmissionManager : MonoBehaviour
                 }
             //}
 
-            // ✅ If the resource type is required, reduce the needed amount
+            // If the resource type is required, reduce the needed amount
             if (requiredResources.ContainsKey(resource.ResourceType))
             {
                 requiredResources[resource.ResourceType] -= resource.Amount;
             }
         }
 
-        // ✅ Check if all required resources have been fully covered
+        // Check if all required resources have been fully covered
         foreach (var required in requiredResources)
         {
             if (required.Value > 0)

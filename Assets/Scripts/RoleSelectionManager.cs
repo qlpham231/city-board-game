@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class RoleSelectionManager : MonoBehaviour
 {
-    //public InputField playerCountInput; // Input field to set number of players
     public GameObject roleSelectionCanvas; // Canvas containing panel for role selection
     public GameObject roleSelectionPanel; // Panel containing role selection buttons
     public Transform playerListContainer; // UI container for displaying selected roles
